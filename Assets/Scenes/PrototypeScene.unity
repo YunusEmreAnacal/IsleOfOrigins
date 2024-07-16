@@ -236,7 +236,7 @@ PrefabInstance:
     - target: {fileID: 5949706081513176824, guid: a0cb3b35b5fb2564983f2275ffa69733,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6474569345499571266, guid: a0cb3b35b5fb2564983f2275ffa69733,
         type: 3}
@@ -462,6 +462,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: PT_Female_Peasant_01_b
+      objectReference: {fileID: 0}
+    - target: {fileID: 2884351092225532727, guid: 3197d31fe4fd3dd4ab29197ded90cf3c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3197d31fe4fd3dd4ab29197ded90cf3c, type: 3}
@@ -2355,7 +2360,7 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1864024497265526657}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: f2421cc96f14d77439c406fa9c64f7f4, type: 3}
+  m_Avatar: {fileID: 9000000, guid: e8196b76e6108b74aa9c9192f64f5003, type: 3}
   m_Controller: {fileID: 9100000, guid: 40db3173a05ae3242b1c182a09b0a183, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
