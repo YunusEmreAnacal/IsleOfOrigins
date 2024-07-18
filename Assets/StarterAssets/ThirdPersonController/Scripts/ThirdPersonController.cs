@@ -124,8 +124,9 @@ namespace StarterAssets
 
 
 
-
-        
+    //MY CODES ***************************************************************************************************
+    public GameObject crouchButton;
+    public GameObject standButton;
     private Animator anim;
     private CharacterController controller;
     [SerializeField] private GameObject HeadPosition;
@@ -133,47 +134,44 @@ namespace StarterAssets
     [SerializeField] private bool Canstand ;
     
 
-
-
-    void Crouching()
+    public void ToggleCrouch()
     {
-        if (Physics.Raycast(HeadPosition.transform.position , Vector3.up, 0.5f))
+        if (isCrouch && Canstand)
         {
-            Canstand = false;
-            Debug.DrawRay(HeadPosition.transform.position,Vector3.up, Color.green);
+            StandUp();
         }
-        else
+        else if (!isCrouch && Canstand)
         {
-            Canstand = true;
+            Crouch();
         }
-
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            if (isCrouch==true && Canstand==true)
-            {
-                isCrouch = false;
-                anim.SetBool("Crouch", false);
-                controller.height = 1.8f;
-                controller.center = new Vector3(0f, 1f,0f);
-                SprintSpeed = 5f;
-                JumpHeight = 1.2f;
-            }
-            else
-            {
-                isCrouch = true;
-                anim.SetBool("Crouch", true);
-                controller.height = 1f;
-                controller.center = new Vector3(0f, 0.55f,0f);
-                SprintSpeed = 2f;
-                JumpHeight = 0f;
-                
-                
-                
-            }
-        }              
-
     }
+
+    private void Crouch()
+    {
+        isCrouch = true;
+        anim.SetBool("Crouch", true);
+        controller.height = 1f;
+        controller.center = new Vector3(0f, 0.55f, 0f);
+        SprintSpeed = 2f;
+        JumpHeight = 0f;
+        crouchButton.SetActive(false);
+        standButton.SetActive(true);
+    }
+
+    private void StandUp()
+    {
+        isCrouch = false;
+        anim.SetBool("Crouch", false);
+        controller.height = 1.8f;
+        controller.center = new Vector3(0f, 1f, 0f);
+        SprintSpeed = 5f;
+        JumpHeight = 1.2f;
+        standButton.SetActive(false);
+        crouchButton.SetActive(true);
+    }
+
     
+    //ENDS**********************************************************************************
         private void Awake()
         {
             // get a reference to our main camera
@@ -203,6 +201,11 @@ namespace StarterAssets
             // reset our timeouts on start
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
+
+            controller.height = 1.8f;
+            controller.center = new Vector3(0f, 1f, 0f);
+            SprintSpeed = 5f;
+            JumpHeight = 1.2f;
         }
 
         private void Update()
@@ -212,7 +215,19 @@ namespace StarterAssets
             JumpAndGravity();
             GroundedCheck();
             Move();
-            Crouching();
+            //Crouch();
+
+            if (Physics.Raycast(HeadPosition.transform.position, Vector3.up, 0.5f))
+        {
+            Canstand = false;
+            Debug.DrawRay(HeadPosition.transform.position, Vector3.up, Color.green);
+        }
+        else
+        {
+            Canstand = true;
+        }
+
+        
         }
 
         private void LateUpdate()

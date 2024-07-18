@@ -39,8 +39,7 @@ public class Movement : ThirdPersonController
             Canstand = true;
         }
 
-        if (Input.GetKeyDown(KeyCode.C))
-        {
+        
             if (isCrouch==true && Canstand==true)
             {
                 isCrouch = false;
@@ -58,7 +57,7 @@ public class Movement : ThirdPersonController
                 
                 
             }
-        }              
+                      
 
     }
     
