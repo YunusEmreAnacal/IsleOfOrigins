@@ -170,6 +170,15 @@ namespace StarterAssets
         crouchButton.SetActive(true);
     }
 
+    public void Attack()
+        {
+            int attackMode = Random.Range(1, 3);
+            if (isCrouch == false)
+            {
+                anim.SetTrigger("attack" + attackMode);
+            }
+        }
+
     
     //ENDS**********************************************************************************
         private void Awake()
