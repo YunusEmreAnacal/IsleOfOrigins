@@ -1,6 +1,7 @@
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
+using static UnityEngine.InputSystem.InputAction;
 #endif
 
 namespace StarterAssets
@@ -12,6 +13,9 @@ namespace StarterAssets
 		public Vector2 look;
 		public bool jump;
 		public bool sprint;
+		[SerializeField] private ThirdPersonController controller;
+
+		[SerializeField] private InputActionAsset inputActions;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -21,7 +25,27 @@ namespace StarterAssets
 		public bool cursorInputForLook = true;
 
 #if ENABLE_INPUT_SYSTEM
-		public void OnMove(InputValue value)
+
+        private void Start()
+        {
+            inputActions.FindAction("Player/Crouch").performed += StarterAssetsInputs_performed; 
+        }
+
+        private void StarterAssetsInputs_performed(CallbackContext obj)
+        {
+            if (obj.action.WasPressedThisFrame())
+            {
+				controller.ToggleCrouch();
+			}
+            
+        }
+
+        private void OnDestroy()
+        {
+			inputActions.FindAction("Player/Crouch").performed -= StarterAssetsInputs_performed;
+		}
+
+        public void OnMove(InputValue value)
 		{
 			MoveInput(value.Get<Vector2>());
 		}
@@ -39,6 +63,8 @@ namespace StarterAssets
 			JumpInput(value.isPressed);
 		}
 
+		
+		
 		public void OnSprint(InputValue value)
 		{
 			SprintInput(value.isPressed);
@@ -60,6 +86,7 @@ namespace StarterAssets
 		{
 			jump = newJumpState;
 		}
+
 
 		public void SprintInput(bool newSprintState)
 		{

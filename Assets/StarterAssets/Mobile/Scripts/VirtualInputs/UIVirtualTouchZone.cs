@@ -99,7 +99,7 @@ public class UIVirtualTouchZone : MonoBehaviour, IPointerDownHandler, IDragHandl
 
     Vector2 ClampValuesToMagnitude(Vector2 position)
     {
-        return Vector2.ClampMagnitude(position, 1);
+        return position;
     }
 
     Vector2 ApplyInversionFilter(Vector2 position)
