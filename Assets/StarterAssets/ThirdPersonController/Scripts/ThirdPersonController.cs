@@ -16,10 +16,10 @@ namespace StarterAssets
     {
         [Header("Player")]
         [Tooltip("Move speed of the character in m/s")]
-        public float MoveSpeed = 4.0f;
+        public float MoveSpeed = 3.0f;
 
         [Tooltip("Sprint speed of the character in m/s")]
-        public float SprintSpeed = 10f;
+        public float SprintSpeed = 8f;
 
         [Tooltip("How fast the character turns to face movement direction")]
         [Range(0.0f, 0.3f)]
@@ -160,10 +160,11 @@ namespace StarterAssets
         anim.SetBool("Crouch", true);
         controller.height = crouchHeight;
         controller.center = new Vector3(0f, controller.height/2, 0f);
-        SprintSpeed = 3f;
+        SprintSpeed = 5f;
         JumpHeight = 0f;
         crouchButton.SetActive(false);
         standButton.SetActive(true);
+        FootstepAudioVolume = 0.25f;
     }
 
     private void StandUp()
@@ -172,11 +173,13 @@ namespace StarterAssets
         anim.SetBool("Crouch", false);
         controller.height = standHeight;
         controller.center = new Vector3(0f, standHeight / 2, 0f);
-        SprintSpeed = 10f;
+        SprintSpeed = 8f;
         JumpHeight = 1.2f;
         standButton.SetActive(false);
         crouchButton.SetActive(true);
+        FootstepAudioVolume = 0.5f;
     }
+
 
     public void Attack()
         {
@@ -358,8 +361,7 @@ namespace StarterAssets
                 _animator.SetFloat("x", x);
                 _animator.SetFloat("y", y);
 
-                Debug.Log("x:"+ x);
-                Debug.Log("y:"+ y);
+                
             }
         }
 
