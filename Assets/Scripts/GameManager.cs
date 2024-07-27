@@ -10,7 +10,6 @@ public class GameManager : MonoBehaviour
     public GameObject pauseMenuUI;
     public GameObject controllerUI;
 
-    public AudioSource audio;
 
     private bool isGameOver = false;
 
