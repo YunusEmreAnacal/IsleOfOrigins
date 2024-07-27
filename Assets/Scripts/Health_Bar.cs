@@ -14,7 +14,7 @@ public class Health_Bar : MonoBehaviour
     private float timer = 0f;
     public float interval = 5f; // 5 saniyelik aralýk
 
-    public GameObject character; // Karakter referansý ekledik
+    public GameObject character; // Karakter referansý
     public Animator animator; // Animator referansý
 
     void Start()
@@ -56,7 +56,8 @@ public class Health_Bar : MonoBehaviour
     {
         if (animator != null)
         {
-            animator.SetTrigger("Die"); // Ölüm animasyonunu tetikle
+            animator.SetTrigger("Die"); // Ölüm animasyonu
+
         }
     }
 }

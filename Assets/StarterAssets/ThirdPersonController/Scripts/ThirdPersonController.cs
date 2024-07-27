@@ -342,10 +342,18 @@ namespace StarterAssets
             // Animator güncellemesi
             if (_hasAnimator)
             {
-                // Koşma ve yürüme ayarları
+                // Current x and y values in the animator
+                float currentX = _animator.GetFloat("x");
+                float currentY = _animator.GetFloat("y");
+
+                // Target x and y values based on input and runMultiplier
                 float runMultiplier = _input.sprint ? 1.0f : 0.5f;
-                float x = inputDirection.x * runMultiplier;
-                float y = inputDirection.z * runMultiplier;
+                float targetX = inputDirection.x * runMultiplier;
+                float targetY = inputDirection.z * runMultiplier;
+
+                // Smoothly transition to the target values
+                float x = Mathf.Lerp(currentX, targetX, Time.deltaTime * SpeedChangeRate);
+                float y = Mathf.Lerp(currentY, targetY, Time.deltaTime * SpeedChangeRate);
 
                 _animator.SetFloat("x", x);
                 _animator.SetFloat("y", y);
