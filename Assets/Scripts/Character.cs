@@ -6,10 +6,14 @@ using UnityEngine;
 public class Character : MonoBehaviour
 {
     public event Action<float> OnHealthChanged;
+    public event Action<float> OnFoodChanged;
     public event Action OnDeath;
 
     private float maxHealth = 100f;
     private float health=100f;
+
+    private float maxFood = 100f;
+    private float food = 100f;
 
     public Animator animator;
 
@@ -28,6 +32,7 @@ public class Character : MonoBehaviour
     void Start()
     {
         health = maxHealth;
+        food = maxFood;
 
         lastYPosition = transform.position.y;
         Audio = GetComponent<AudioSource>();
@@ -75,12 +80,22 @@ public class Character : MonoBehaviour
         Audio.clip = damageHurtVoice;
         Audio.Play();
         health -= damage;
-
+        food -= damage;
         OnHealthChanged?.Invoke(health);
+        
         if (health <= 0)
         {
             Die();
         }
+    }
+
+    public void Hunger()
+    {
+        if (isDead) return;
+
+        
+
+        OnFoodChanged?.Invoke(food);
     }
 
     private void Die()
@@ -113,6 +128,9 @@ public class Character : MonoBehaviour
 
     public float GetHealth() => health;
     public float GetMaxHealth() => maxHealth;
+
+    public float GetFood() => food;
+    public float GetMaxFood() => maxFood;
 }
 
 
