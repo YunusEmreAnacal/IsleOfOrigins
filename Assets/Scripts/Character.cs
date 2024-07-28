@@ -9,14 +9,14 @@ public class Character : MonoBehaviour
     public event Action OnDeath;
 
     private float maxHealth = 100f;
-    private float health;
+    private float health=100f;
 
     public Animator animator;
 
     private float lastYPosition;
     private bool isFalling = false;
     public float minFallHeightForDamage = 3f;
-    public float fallDamageMultiplier = 0.1f; // Yüksekliðe baðlý hasar çarpaný
+    public float fallDamageMultiplier = 0.1f; // Yï¿½ksekliï¿½e baï¿½lï¿½ hasar ï¿½arpanï¿½
 
     public AudioClip damageHurtVoice;
     private AudioSource Audio;
@@ -28,14 +28,17 @@ public class Character : MonoBehaviour
     void Start()
     {
         health = maxHealth;
+
         lastYPosition = transform.position.y;
         Audio = GetComponent<AudioSource>();
-        Debug.Log("prevHeþight:" + lastYPosition);
+        Debug.Log("prevHeï¿½ight:" + lastYPosition);
+        Debug.Log("maxh:" + maxHealth);
+        Debug.Log("health:" + health);
     }
 
     void Update()
     {
-        // Karakterin düþüþe geçtiðini belirle
+        // Karakterin dï¿½ï¿½ï¿½ï¿½e geï¿½tiï¿½ini belirle
         if (characterController.isGrounded)
         {
             if (isFalling)
@@ -49,7 +52,7 @@ public class Character : MonoBehaviour
             if (!isFalling)
             {
                 isFalling = true;
-                lastYPosition = transform.position.y; // Düþüþ baþlamadan önceki yüksekliði kaydet
+                lastYPosition = transform.position.y; // Dï¿½ï¿½ï¿½ï¿½ baï¿½lamadan ï¿½nceki yï¿½ksekliï¿½i kaydet
             }
         }
     }
@@ -57,12 +60,12 @@ public class Character : MonoBehaviour
     private void CalculateFallDamage()
     {
         float currentYPosition = transform.position.y;
-        float fallHeight = lastYPosition - currentYPosition; // Düþüþ yüksekliðini hesapla
+        float fallHeight = lastYPosition - currentYPosition; // Dï¿½ï¿½ï¿½ï¿½ yï¿½ksekliï¿½ini hesapla
 
-        if (fallHeight > minFallHeightForDamage) // Düþüþ yüksekliði pozitifse hasar uygula
+        if (fallHeight > minFallHeightForDamage) // Dï¿½ï¿½ï¿½ï¿½ yï¿½ksekliï¿½i pozitifse hasar uygula
         {
-            float fallDamage = (fallHeight- minFallHeightForDamage) * fallDamageMultiplier; // Düþüþe baðlý hasarý hesapla
-            TakeDamage(fallDamage); // Hesaplanan hasarý uygula
+            float fallDamage = (fallHeight- minFallHeightForDamage) * fallDamageMultiplier; // Dï¿½ï¿½ï¿½ï¿½e baï¿½lï¿½ hasarï¿½ hesapla
+            TakeDamage(fallDamage); // Hesaplanan hasarï¿½ uygula
         }
     }
 
@@ -93,7 +96,7 @@ public class Character : MonoBehaviour
         }
 
 
-        // Ölüm animasyonu tetikle
+        // ï¿½lï¿½m animasyonu tetikle
         if (animator != null)
         {
             animator.SetTrigger("Die");

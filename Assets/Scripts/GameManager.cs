@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     public GameObject gameOverUI;
-    public GameObject pauseMenuUI;
+
     public GameObject controllerUI;
 
 
@@ -15,11 +15,11 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        // GameManager'in tekil olmasýný saðla
+        // GameManager'in tekil olmasï¿½nï¿½ saï¿½la
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Sahne geçiþlerinde yok olmasýný engeller
+            DontDestroyOnLoad(gameObject); // Sahne geï¿½iï¿½lerinde yok olmasï¿½nï¿½ engeller
         }
         else
         {
@@ -29,12 +29,10 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        // Oyun baþlangýç ayarlarý
+        // Oyun baï¿½langï¿½ï¿½ ayarlarï¿½
         if (gameOverUI != null)
             gameOverUI.SetActive(false);
 
-        if (pauseMenuUI != null)
-            pauseMenuUI.SetActive(false);
     }
 
     public void GameOver()
@@ -49,7 +47,7 @@ public class GameManager : MonoBehaviour
 
         }
 
-        // Game Over UI'yi göster
+        // Game Over UI'yi gï¿½ster
         if (gameOverUI != null)
         {
             gameOverUI.SetActive(true);
@@ -59,24 +57,6 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0f;
     }
 
-
-    public void PauseGame()
-    {
-        Time.timeScale = 0f;
-        if (pauseMenuUI != null)
-        {
-            pauseMenuUI.SetActive(true);
-        }
-    }
-
-    public void ResumeGame()
-    {
-        Time.timeScale = 1f;
-        if (pauseMenuUI != null)
-        {
-            pauseMenuUI.SetActive(false);
-        }
-    }
 
     
 
