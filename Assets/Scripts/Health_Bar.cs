@@ -15,29 +15,29 @@ public class Health_Bar : MonoBehaviour
 
     public float lerpSpeed = 0.5f;
 
-    public Character character; // Karakter referans�
+    //public Character Character; // Karakter referans�
 
     private void Start()
     {
-        Debug.Log("bar health1:" + character.GetHealth());
-        if (character != null) 
+        Debug.Log("bar health1:" + Character.Instance.Health);
+        if (Character.Instance != null) 
         {
-            character.OnHealthChanged += UpdateHealthUI;
-            character.OnFoodChanged += UpdateFoodUI;
+            Character.Instance.OnHealthChanged += UpdateHealthUI;
+            Character.Instance.OnFoodChanged += UpdateFoodUI;
         }
 
-        healthSlider.maxValue = character.MaxHealth;
-        easeHealthSlider.maxValue = character.MaxHealth;
+        healthSlider.maxValue = Character.Instance.MaxHealth;
+        easeHealthSlider.maxValue = Character.Instance.MaxHealth;
 
-        foodSlider.maxValue = character.GetMaxFood();
-        easefoodSlider.maxValue = character.GetMaxFood();
+        foodSlider.maxValue = Character.Instance.MaxFood;
+        easefoodSlider.maxValue = Character.Instance.MaxFood;
 
-        Debug.Log("bar health2:" + character.GetHealth());
-        UpdateHealthUI(character.GetHealth());
-        UpdateFoodUI(character.GetFood());
+        Debug.Log("bar health2:" + Character.Instance.Health);
+        UpdateHealthUI(Character.Instance.Health);
+        UpdateFoodUI(Character.Instance.Food);
 
-        Debug.Log("bar health3:" + character.GetHealth());
-        Debug.Log("bar maxh:" + character.MaxHealth);
+        Debug.Log("bar health3:" + Character.Instance.Health);
+        Debug.Log("bar maxh:" + Character.Instance.MaxHealth);
         Debug.Log("heslid:" + healthSlider.maxValue);
         Debug.Log("easslid:" + easeHealthSlider.maxValue);
 
@@ -50,10 +50,10 @@ public class Health_Bar : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (character != null)
+        if (Character.Instance != null)
         {
-            character.OnHealthChanged -= UpdateHealthUI;
-            character.OnFoodChanged -= UpdateFoodUI;
+            Character.Instance.OnHealthChanged -= UpdateHealthUI;
+            Character.Instance.OnFoodChanged -= UpdateFoodUI;
         }
         
     }

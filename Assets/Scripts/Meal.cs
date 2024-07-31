@@ -6,7 +6,7 @@ using UnityEngine;
 public class Meal : MonoBehaviour
 {
     public int foodIncrease = 25; // Etin karakterin sağlığını ne kadar artıracağı
-    public Character character;
+    //public Character character;
 
     
     private void OnTriggerEnter(Collider other)
@@ -18,7 +18,7 @@ public class Meal : MonoBehaviour
             
                 // Karakterin sağlığını artır
                 Debug.Log("girdiiiiiii." + other.gameObject.name);
-                character.IncreaseFood(foodIncrease);
+                Character.Instance.IncreaseFood(foodIncrease);
 
                 // Et objesini yok et
                 Destroy(gameObject);

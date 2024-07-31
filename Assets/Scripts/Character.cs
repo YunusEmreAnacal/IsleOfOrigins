@@ -8,15 +8,19 @@ using UnityEngine.Analytics;
 
 public class Character : MonoBehaviour
 {
+    public static Character Instance;
     public event Action<float> OnHealthChanged;
     public event Action<float> OnFoodChanged;
     public event Action OnDeath;
 
     public float MaxHealth { get; private set; } = 100f;
-    private float health ;
 
-    private float maxFood = 100f;
-    private float food ;
+    public float Health { get; private set; }
+
+    public float MaxFood { get; private set; } = 100f;
+
+    public float Food { get; private set; } 
+
 
     public Animator animator;
 
@@ -38,16 +42,31 @@ public class Character : MonoBehaviour
     private bool isDead = false;
 
 
+
+    private void Awake()
+    {
+        // GameManager'in tekil olmasını sağla
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // Sahne ge�i�lerinde yok olmas�n� engeller
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+    
     void Start()
     {
-        health = MaxHealth;
-        food = maxFood;
+        Health = MaxHealth;
+        Food = MaxFood;
 
         lastYPosition = transform.position.y;
         Audio = GetComponent<AudioSource>();
         Debug.Log("prevHe�ight:" + lastYPosition);
         Debug.Log("maxh:" + MaxHealth);
-        Debug.Log("health:" + health);
+        Debug.Log("health:" + Health);
     }
 
     void Update()
@@ -56,7 +75,7 @@ public class Character : MonoBehaviour
         ReduceHunger();
         IncreaseHealth();
 
-        
+
 
         // Karakterin düşüşee geçtiğini belirle
         if (characterController.isGrounded)
@@ -94,11 +113,11 @@ public class Character : MonoBehaviour
         if (isDead) return;
         Audio.clip = damageHurtVoice;
         Audio.Play();
-        health -= damage;
+        Health -= damage;
 
-        OnHealthChanged?.Invoke(health);
+        OnHealthChanged?.Invoke(Health);
 
-        if (health <= 0)
+        if (Health <= 0)
         {
             Die();
         }
@@ -110,53 +129,54 @@ public class Character : MonoBehaviour
         healthTimer += Time.deltaTime;
         if (healthTimer > healthIncreaseTime)
         {
-            if (food >= maxFood && health < MaxHealth)
+            if (Food >= MaxFood && Health < MaxHealth)
             {
                 Debug.Log("ıncrsesaaaa ");
-                health = Mathf.Min(MaxHealth,health +10);
-                OnHealthChanged?.Invoke(health);
+                Health = Mathf.Min(MaxHealth, Health + 10);
+                OnHealthChanged?.Invoke(Health);
                 healthTimer = 0f;
             }
-            
+
         }
- 
-        
+
+
     }
 
 
 
     private void ReduceHunger()
     {
-        
+
         if (isDead) return;
 
         hungerTimer += Time.deltaTime;
         if (hungerTimer >= hungerTime)
         {
-            if (food > 0)
+            if (Food > 0)
             {
                 Debug.Log("xxx");
-                food = Mathf.Max(0, food-10);
-                OnFoodChanged?.Invoke(food);
-                
+                Food = Mathf.Max(0, Food - 10);
+                OnFoodChanged?.Invoke(Food);
+
             }
             else
             {
                 TakeDamage(10);
-                
+
             }
             hungerTimer = 0f;
         }
-        
+
 
     }
 
     public void IncreaseFood(float foodIncrease)
     {
         if (isDead) return;
-        if (food < maxFood)
+        if (Food < MaxFood)
         {
-            food += foodIncrease;//revize
+            Food = Mathf.Min(MaxFood, foodIncrease + Food);
+            OnFoodChanged?.Invoke(Food);
         }
 
 
@@ -190,11 +210,6 @@ public class Character : MonoBehaviour
         GameManager.Instance.GameOver();
     }
 
-    public float GetHealth() => health;
-
-
-    public float GetFood() => food;
-    public float GetMaxFood() => maxFood;
 }
 
 

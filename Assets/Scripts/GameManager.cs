@@ -6,9 +6,9 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    public GameObject gameOverUI; //serilazfield
+    [SerializeField] private GameObject gameOverUI;
 
-    public GameObject controllerUI;
+    [SerializeField] private GameObject controllerUI;
 
 
     private bool isGameOver = false;
