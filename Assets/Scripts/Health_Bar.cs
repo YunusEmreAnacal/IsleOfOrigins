@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[DefaultExecutionOrder(1)]
+
 public class Health_Bar : MonoBehaviour
 {
     public Slider healthSlider;
@@ -10,6 +12,7 @@ public class Health_Bar : MonoBehaviour
 
     public Slider foodSlider;
     public Slider easefoodSlider;
+
     public float lerpSpeed = 0.5f;
 
     public Character character; // Karakter referans�
@@ -20,15 +23,11 @@ public class Health_Bar : MonoBehaviour
         if (character != null) 
         {
             character.OnHealthChanged += UpdateHealthUI;
-        }
-
-        if (character != null)
-        {
             character.OnFoodChanged += UpdateFoodUI;
         }
 
-        healthSlider.maxValue = character.GetMaxHealth();
-        easeHealthSlider.maxValue = character.GetMaxHealth();
+        healthSlider.maxValue = character.MaxHealth;
+        easeHealthSlider.maxValue = character.MaxHealth;
 
         foodSlider.maxValue = character.GetMaxFood();
         easefoodSlider.maxValue = character.GetMaxFood();
@@ -38,7 +37,7 @@ public class Health_Bar : MonoBehaviour
         UpdateFoodUI(character.GetFood());
 
         Debug.Log("bar health3:" + character.GetHealth());
-        Debug.Log("bar maxh:" + character.GetMaxHealth());
+        Debug.Log("bar maxh:" + character.MaxHealth);
         Debug.Log("heslid:" + healthSlider.maxValue);
         Debug.Log("easslid:" + easeHealthSlider.maxValue);
 
@@ -54,11 +53,9 @@ public class Health_Bar : MonoBehaviour
         if (character != null)
         {
             character.OnHealthChanged -= UpdateHealthUI;
-        }
-        if (character != null)
-        {
             character.OnFoodChanged -= UpdateFoodUI;
         }
+        
     }
 
     private void UpdateHealthUI(float currentHealth)

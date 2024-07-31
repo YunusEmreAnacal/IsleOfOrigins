@@ -6,7 +6,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    public GameObject gameOverUI;
+    public GameObject gameOverUI; //serilazfield
 
     public GameObject controllerUI;
 
@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        // GameManager'in tekil olmas�n� sa�la
+        // GameManager'in tekil olmasını sağla
         if (Instance == null)
         {
             Instance = this;
@@ -30,7 +30,6 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         // Oyun ba�lang�� ayarlar�
-        if (gameOverUI != null)
             gameOverUI.SetActive(false);
 
     }
@@ -41,17 +40,9 @@ public class GameManager : MonoBehaviour
 
         isGameOver = true;
 
-        if (controllerUI != null)
-        {
-            controllerUI.SetActive(false);
-
-        }
-
-        // Game Over UI'yi g�ster
-        if (gameOverUI != null)
-        {
-            gameOverUI.SetActive(true);
-        }
+        controllerUI.SetActive(false);
+        gameOverUI.SetActive(true);
+        
 
         // Oyunu durdur
         Time.timeScale = 0f;

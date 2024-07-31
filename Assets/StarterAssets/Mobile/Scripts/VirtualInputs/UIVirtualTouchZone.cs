@@ -16,6 +16,7 @@ public class UIVirtualTouchZone : MonoBehaviour, IPointerDownHandler, IDragHandl
     public float magnitudeMultiplier = 1f;
     public bool invertXOutputValue;
     public bool invertYOutputValue;
+    public float sensitivity = 100f;
 
     //Stored Pointer Values
     private Vector2 pointerDownPosition;
@@ -55,12 +56,12 @@ public class UIVirtualTouchZone : MonoBehaviour, IPointerDownHandler, IDragHandl
         RectTransformUtility.ScreenPointToLocalPointInRectangle(containerRect, eventData.position, eventData.pressEventCamera, out currentPointerPosition);
         
         Vector2 positionDelta = GetDeltaBetweenPositions(pointerDownPosition, currentPointerPosition);
-
+        positionDelta /= sensitivity;
         Vector2 clampedPosition = ClampValuesToMagnitude(positionDelta);
         
         Vector2 outputPosition = ApplyInversionFilter(clampedPosition);
 
-        OutputPointerEventValue(outputPosition * magnitudeMultiplier);
+        OutputPointerEventValue(outputPosition);
     }
 
     public void OnPointerUp(PointerEventData eventData)
@@ -99,6 +100,11 @@ public class UIVirtualTouchZone : MonoBehaviour, IPointerDownHandler, IDragHandl
 
     Vector2 ClampValuesToMagnitude(Vector2 position)
     {
+        if (clampToMagnitude)
+        {
+            position = Vector2.ClampMagnitude(position, magnitudeMultiplier);
+        }
+
         return position;
     }
 

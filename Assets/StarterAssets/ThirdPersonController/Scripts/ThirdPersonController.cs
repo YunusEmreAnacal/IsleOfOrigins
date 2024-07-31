@@ -329,17 +329,18 @@ namespace StarterAssets
             }
 
             // Normalize input direction
-            Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
+            Vector3 inputDirection = Vector3.ClampMagnitude(new Vector3(_input.move.x, 0, _input.move.y), 1);
 
             // Always face the camera direction
             _targetRotation = _mainCamera.transform.eulerAngles.y;
             float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, RotationSmoothTime);
             transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
 
-            Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * inputDirection;
+            Vector3 targetDirection = Vector3.ClampMagnitude(Quaternion.Euler(0.0f, _targetRotation, 0.0f) * inputDirection, 1); 
+                //Quaternion.Euler(0.0f, _targetRotation, 0.0f) * inputDirection;
 
             // Move the player
-            _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) +
+            _controller.Move(targetDirection * (_speed * Time.deltaTime) +
                              new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 
             // Animator güncellemesi
@@ -350,13 +351,15 @@ namespace StarterAssets
                 float currentY = _animator.GetFloat("y");
 
                 // Target x and y values based on input and runMultiplier
-                float runMultiplier = _input.sprint ? 1.0f : 0.5f;
-                float targetX = inputDirection.x * runMultiplier;
-                float targetY = inputDirection.z * runMultiplier;
+                float runMultiplier = _input.sprint ? 1.0f : 0.1f;
+                float targetX = Mathf.Min(_input.move.x,1) * runMultiplier;
+                float targetY = Mathf.Min(_input.move.y, 1) * runMultiplier;
 
                 // Smoothly transition to the target values
                 float x = Mathf.Lerp(currentX, targetX, Time.deltaTime * SpeedChangeRate);
                 float y = Mathf.Lerp(currentY, targetY, Time.deltaTime * SpeedChangeRate);
+
+                
 
                 _animator.SetFloat("x", x);
                 _animator.SetFloat("y", y);

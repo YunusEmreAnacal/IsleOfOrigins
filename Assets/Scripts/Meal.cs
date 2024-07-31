@@ -15,15 +15,14 @@ public class Meal : MonoBehaviour
         {
             
             Debug.Log("girdi." + other.gameObject.name);
-            if (character != null)
-            {
+            
                 // Karakterin sağlığını artır
                 Debug.Log("girdiiiiiii." + other.gameObject.name);
                 character.IncreaseFood(foodIncrease);
 
                 // Et objesini yok et
                 Destroy(gameObject);
-            }
+            
         }
     }
 }

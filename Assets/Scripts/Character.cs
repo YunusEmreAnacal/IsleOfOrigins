@@ -5,17 +5,18 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Analytics;
 
+
 public class Character : MonoBehaviour
 {
     public event Action<float> OnHealthChanged;
     public event Action<float> OnFoodChanged;
     public event Action OnDeath;
 
-    private float maxHealth = 100f;
-    private float health = 100f;
+    public float MaxHealth { get; private set; } = 100f;
+    private float health ;
 
     private float maxFood = 100f;
-    private float food = 100f;
+    private float food ;
 
     public Animator animator;
 
@@ -24,10 +25,10 @@ public class Character : MonoBehaviour
     public float minFallHeightForDamage = 3f;
     public float fallDamageMultiplier = 0.1f; // Y�ksekli�e ba�l� hasar �arpan�
 
-    private float timer = 0f;
-    private float timer2 = 0f;
-    public float hungerTime = 4f;
+    private float hungerTimer = 0f;
+    private float healthTimer = 0f;
 
+    public float hungerTime = 4f;
     public float healthIncreaseTime = 3f;
 
     public AudioClip damageHurtVoice;
@@ -39,13 +40,13 @@ public class Character : MonoBehaviour
 
     void Start()
     {
-        health = maxHealth;
+        health = MaxHealth;
         food = maxFood;
 
         lastYPosition = transform.position.y;
         Audio = GetComponent<AudioSource>();
         Debug.Log("prevHe�ight:" + lastYPosition);
-        Debug.Log("maxh:" + maxHealth);
+        Debug.Log("maxh:" + MaxHealth);
         Debug.Log("health:" + health);
     }
 
@@ -53,13 +54,9 @@ public class Character : MonoBehaviour
     {
 
         ReduceHunger();
+        IncreaseHealth();
 
-        timer2 += Time.deltaTime;
-        if (timer2 > healthIncreaseTime)
-        {
-            IncreaseHealth();
-            timer2 = 0f;
-        }
+        
 
         // Karakterin düşüşee geçtiğini belirle
         if (characterController.isGrounded)
@@ -107,56 +104,60 @@ public class Character : MonoBehaviour
         }
     }
 
-    public void IncreaseHealth()
+    private void IncreaseHealth()
     {
         if (isDead) return;
-        
-            if (food >= 100f && health != 100f)
+        healthTimer += Time.deltaTime;
+        if (healthTimer > healthIncreaseTime)
+        {
+            if (food >= maxFood && health < MaxHealth)
             {
                 Debug.Log("ıncrsesaaaa ");
-                health += 10;
-
+                health = Mathf.Min(MaxHealth,health +10);
+                OnHealthChanged?.Invoke(health);
+                healthTimer = 0f;
             }
+            
+        }
+ 
         
-        OnHealthChanged?.Invoke(health);
     }
 
 
 
-    public void ReduceHunger()
+    private void ReduceHunger()
     {
         
         if (isDead) return;
 
-        timer += Time.deltaTime;
-        if (timer >= hungerTime)
+        hungerTimer += Time.deltaTime;
+        if (hungerTimer >= hungerTime)
         {
             if (food > 0)
             {
                 Debug.Log("xxx");
-                food -= 10;
-                timer = 0f;
+                food = Mathf.Max(0, food-10);
+                OnFoodChanged?.Invoke(food);
+                
             }
             else
             {
                 TakeDamage(10);
-                timer = 0f;
+                
             }
+            hungerTimer = 0f;
         }
-        OnFoodChanged?.Invoke(food);
+        
 
     }
 
     public void IncreaseFood(float foodIncrease)
     {
         if (isDead) return;
-        if (food >= 0 && food < 100)
+        if (food < maxFood)
         {
-            food += foodIncrease;
+            food += foodIncrease;//revize
         }
-        
-
-
 
 
     }
@@ -190,7 +191,7 @@ public class Character : MonoBehaviour
     }
 
     public float GetHealth() => health;
-    public float GetMaxHealth() => maxHealth;
+
 
     public float GetFood() => food;
     public float GetMaxFood() => maxFood;
