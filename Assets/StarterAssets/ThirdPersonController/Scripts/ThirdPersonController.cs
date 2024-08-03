@@ -141,6 +141,10 @@ namespace StarterAssets
     float x;
     float y;
 
+        public float attackRange = 10f;
+        public float attackDamage = 25f;
+        public LayerMask sheepLayer;
+
 
         public void ToggleCrouch()
     {
@@ -188,6 +192,31 @@ namespace StarterAssets
             {
                 int attackMode = Random.Range(1, 3);
                 anim.SetTrigger("attack" + attackMode);
+            }
+
+            Vector3 rayOrigin = transform.position + Vector3.up * 0.5f;
+            Vector3 rayDirection = transform.forward + Vector3.down * 0.3f;
+
+            Debug.DrawRay(rayOrigin, rayDirection * attackRange, Color.red, 2.0f);
+
+            RaycastHit hit;
+            if (Physics.Raycast(rayOrigin, rayDirection, out hit, attackRange))
+            {
+                Debug.Log("Hit something: " + hit.collider.gameObject.name);
+                SheepHealth sheepHealth = hit.collider.GetComponent<SheepHealth>();
+                if (sheepHealth != null)
+                {
+                    Debug.Log("Hit a sheep!");
+                    sheepHealth.TakeDamage(attackDamage, transform.position);
+                }
+                else
+                {
+                    Debug.Log("Hit something, but it's not a sheep.");
+                }
+            }
+            else
+            {
+                Debug.Log("Raycast didn't hit anything.");
             }
         }
 

@@ -40,9 +40,7 @@ public class Character : MonoBehaviour
 
     [SerializeField] private CharacterController characterController;
 
-    public float attackRange = 2f;
-    public float attackDamage = 20f;
-    public LayerMask sheepLayer;
+    
     private bool isDead = false;
     private bool isCrouch;
 
@@ -185,25 +183,8 @@ public class Character : MonoBehaviour
 
     }
 
-    private void Attack()
-    {
-        if (!isCrouch)
-            {
-                //int attackMode = Random.Range(1, 3);
-                //animator.SetTrigger("attack" + attackMode);
-            }
-        
-
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.forward, out hit, attackRange, sheepLayer))
-        {
-            SheepHealth sheepHealth = hit.collider.GetComponent<SheepHealth>();
-            if (sheepHealth != null)
-            {
-                sheepHealth.TakeDamage(attackDamage, transform.position);
-            }
-        }
-    }
+    
+    
 
     private void Die()
     {

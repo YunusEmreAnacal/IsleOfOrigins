@@ -21,17 +21,20 @@ public class SheepMove : MonoBehaviour
 
     void Update()
     {
-        timer += Time.deltaTime;
+        // Eðer koyun kaçýyorsa, yol bulma iþlemi yapýlmamalýdýr
+        
+            timer += Time.deltaTime;
 
-        if (timer >= wanderTimer)
-        {
-            Vector3 newPos = RandomNavSphere(transform.position, wanderRadius, -1);
-            agent.SetDestination(newPos);
-            timer = 0;
-        }
+            if (timer >= wanderTimer)
+            {
+                Vector3 newPos = RandomNavSphere(transform.position, wanderRadius, -1);
+                agent.SetDestination(newPos);
+                timer = 0;
+            }
 
-        // Animator walk parametresini ayarlama
-        animator.SetBool("Walk", agent.velocity.magnitude > 0.1f);
+            // Animator walk parametresini ayarlama
+            animator.SetBool("walk", agent.velocity.magnitude > 0.1f);
+        
     }
 
     public static Vector3 RandomNavSphere(Vector3 origin, float dist, int layermask)
