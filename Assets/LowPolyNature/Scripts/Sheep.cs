@@ -41,7 +41,7 @@ public class Sheep : MonoBehaviour
             // Hit by a weapon
             if(item.ItemType == EItemType.Weapon)
             {
-                if(Player.GetComponent<PlayerController>().IsAttacking)
+                if(Player.GetComponent<Character>())//isattacking fonks yaz
                 {
                     mIsDead = true;
                     mAgent.enabled = false;
@@ -76,9 +76,10 @@ public class Sheep : MonoBehaviour
             return;
 
         // Only runaway if player is armed
-        bool isPlayerArmed = Player.GetComponent<PlayerController>().IsArmed;
+        bool isPlayerArmed = false; 
+        //Player.GetComponent<Character>();//isarmed fonks yaz
 
-        // Performance optimization: Thx to kyl3r123 :-)
+        // Performance optimization
         float squaredDist = (transform.position - Player.transform.position).sqrMagnitude;
         float EnemyDistanceRunSqrt = EnemyDistanceRun * EnemyDistanceRun;
 

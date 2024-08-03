@@ -7,7 +7,6 @@ public class HUD : MonoBehaviour {
 
     public Inventory Inventory;
 
-    public GameObject MessagePanel;
 
 	// Use this for initialization
 	void Start () {
@@ -97,41 +96,5 @@ public class HUD : MonoBehaviour {
         }
     }
 
-    private bool mIsMessagePanelOpened = false;
-
-    public bool IsMessagePanelOpened
-    {
-        get { return mIsMessagePanelOpened; }
-    }
-
-    public void OpenMessagePanel(InteractableItemBase item)
-    {
-        MessagePanel.SetActive(true);
-
-        Text mpText = MessagePanel.transform.Find("Text").GetComponent<Text>();
-        mpText.text = item.InteractText;
-        
-
-        mIsMessagePanelOpened = true;
-
-
-    }
-
-    public void OpenMessagePanel(string text)
-    {
-        MessagePanel.SetActive(true);
-
-        Text mpText = MessagePanel.transform.Find("Text").GetComponent<Text>();
-        mpText.text = text;
-
-
-        mIsMessagePanelOpened = true;
-    }
-
-    public void CloseMessagePanel()
-    {
-        MessagePanel.SetActive(false);
-
-        mIsMessagePanelOpened = false;
-    }
+  
 }

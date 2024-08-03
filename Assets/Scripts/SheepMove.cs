@@ -1,0 +1,45 @@
+using System.Collections;
+using UnityEngine;
+using UnityEngine.AI;
+
+public class SheepMove : MonoBehaviour
+{
+    public float wanderRadius = 10f;
+    public float wanderTimer = 5f;
+    private Transform target;
+    private NavMeshAgent agent;
+    private float timer;
+
+    private Animator animator;
+
+    void OnEnable()
+    {
+        agent = GetComponent<NavMeshAgent>();
+        timer = wanderTimer;
+        animator = GetComponent<Animator>();
+    }
+
+    void Update()
+    {
+        timer += Time.deltaTime;
+
+        if (timer >= wanderTimer)
+        {
+            Vector3 newPos = RandomNavSphere(transform.position, wanderRadius, -1);
+            agent.SetDestination(newPos);
+            timer = 0;
+        }
+
+        // Animator walk parametresini ayarlama
+        animator.SetBool("Walk", agent.velocity.magnitude > 0.1f);
+    }
+
+    public static Vector3 RandomNavSphere(Vector3 origin, float dist, int layermask)
+    {
+        Vector3 randDirection = Random.insideUnitSphere * dist;
+        randDirection += origin;
+        NavMeshHit navHit;
+        NavMesh.SamplePosition(randDirection, out navHit, dist, layermask);
+        return navHit.position;
+    }
+}
