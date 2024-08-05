@@ -204,14 +204,16 @@ namespace StarterAssets
             {
                 Debug.Log("Hit something: " + hit.collider.gameObject.name);
                 SheepHealth sheepHealth = hit.collider.GetComponent<SheepHealth>();
+                Zombie_Data zombieHealth  = hit.collider.GetComponent<Zombie_Data>();
                 if (sheepHealth != null)
                 {
                     Debug.Log("Hit a sheep!");
                     sheepHealth.TakeDamage(attackDamage, transform.position);
                 }
-                else
+                else if (zombieHealth != null)
                 {
-                    Debug.Log("Hit something, but it's not a sheep.");
+                    Debug.Log("Hit a Zombie");
+                    zombieHealth.TakeDamage(attackDamage, transform.position);
                 }
             }
             else

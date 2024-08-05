@@ -1,27 +1,28 @@
-using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class SheepHealth : MonoBehaviour
+public class Zombie_Data : MonoBehaviour
 {
     public float maxHealth = 100f;
     private float currentHealth;
     private Animator animator;
     private NavMeshAgent agent;
     public Rigidbody rb;
-    public float knockbackForce = 10f;
-    public GameObject mealPrefab;
 
-    public Renderer sheepRenderer;
+    public Renderer zombieRenderer;
     public Color hitColor = Color.red;
     public float colorChangeDuration = 0.2f;
     private Color originalColor;
 
+    public float attackRange = 10f;
+    public float attackDamage = 25f;
+
     private Vector3 lastAttackerPosition;
     private bool isDead = false; // Koyunun ölü olup olmadığını kontrol etmek için
 
-    public delegate void DeathEventHandler(GameObject deadSheep);
+    public delegate void DeathEventHandler(GameObject deadZombie);
     public event DeathEventHandler OnDeathEvent;
 
     private void Start()
@@ -30,7 +31,7 @@ public class SheepHealth : MonoBehaviour
         animator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
         rb = GetComponent<Rigidbody>();
-        originalColor = sheepRenderer.material.color;
+        originalColor = zombieRenderer.material.color;
     }
 
     public void TakeDamage(float damage, Vector3 attackerPosition)
@@ -47,7 +48,34 @@ public class SheepHealth : MonoBehaviour
         else
         {
             StartCoroutine(ChangeColor());
-            FleeFromAttacker();
+        }
+    }
+
+    private void OnZombieAttack()
+    {
+        if (isDead) return;
+
+        Vector3 rayOrigin = transform.position + Vector3.up * 0.5f;
+        Vector3 rayDirection = transform.forward + Vector3.down * 0.3f;
+
+        Debug.DrawRay(rayOrigin, rayDirection * attackRange, Color.red, 2.0f);
+
+        RaycastHit hit;
+        if (Physics.Raycast(rayOrigin, rayDirection, out hit, attackRange))
+        {
+            
+            Character charHealth = hit.collider.GetComponent<Character>();
+            
+            if (charHealth != null)
+            {
+                Debug.Log("Hit a sheep!");
+                charHealth.TakeDamage(attackDamage, transform.position);
+            }
+            
+        }
+        else
+        {
+            Debug.Log("Raycast didn't hit anything.");
         }
     }
 
@@ -69,17 +97,8 @@ public class SheepHealth : MonoBehaviour
     private IEnumerator DieRoutine()
     {
         // Ölüm rengi değişimi
-        sheepRenderer.material.color = hitColor;
-        yield return new WaitForSeconds(colorChangeDuration);
-
-        // Meal objelerinin spawn edilmesi
-        int numberOfMeals = UnityEngine.Random.Range(1, 4);
-        for (int i = 0; i < numberOfMeals; i++)
-        {
-            Vector3 spawnPosition = transform.position + UnityEngine.Random.insideUnitSphere * 1.5f;
-            spawnPosition.y = transform.position.y;
-            Instantiate(mealPrefab, spawnPosition, Quaternion.identity);
-        }
+        zombieRenderer.material.color = hitColor;
+        yield return new WaitForSeconds(2.5f);
 
         // Ölüm olayını tetikle
         OnDeathEvent?.Invoke(gameObject);
@@ -88,20 +107,12 @@ public class SheepHealth : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void FleeFromAttacker()
-    {
-        if (isDead) return;
 
-        Vector3 fleeDirection = (transform.position - lastAttackerPosition).normalized * 5f;
-        agent.SetDestination(transform.position + fleeDirection);
-    }
 
     private IEnumerator ChangeColor()
     {
-        sheepRenderer.material.color = hitColor;
+        zombieRenderer.material.color = hitColor;
         yield return new WaitForSeconds(colorChangeDuration);
-        sheepRenderer.material.color = originalColor;
+        zombieRenderer.material.color = originalColor;
     }
 }
-
-

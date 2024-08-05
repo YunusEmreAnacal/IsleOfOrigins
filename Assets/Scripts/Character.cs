@@ -40,7 +40,7 @@ public class Character : MonoBehaviour
 
     [SerializeField] private CharacterController characterController;
 
-    
+    private Vector3 lastPosition;
     private bool isDead = false;
     private bool isCrouch;
 
@@ -105,16 +105,17 @@ public class Character : MonoBehaviour
         if (fallHeight > minFallHeightForDamage) // D���� y�ksekli�i pozitifse hasar uygula
         {
             float fallDamage = (fallHeight - minFallHeightForDamage) * fallDamageMultiplier; // D����e ba�l� hasar� hesapla
-            TakeDamage(fallDamage); // Hesaplanan hasar� uygula
+            TakeDamage(fallDamage,lastPosition); // Hesaplanan hasar� uygula
         }
     }
 
-    public void TakeDamage(float damage) // karakterin canını düşüren fonksiyon
+    public void TakeDamage(float damage, Vector3 attackerPosition) // karakterin canını düşüren fonksiyon
     {
         if (isDead) return;
         Audio.clip = damageHurtVoice;
         Audio.Play();
         Health -= damage;
+        lastPosition = attackerPosition;
 
         OnHealthChanged?.Invoke(Health);
 
@@ -162,7 +163,7 @@ public class Character : MonoBehaviour
             }
             else
             {
-                TakeDamage(10);
+                TakeDamage(10,lastPosition);
 
             }
             hungerTimer = 0f;

@@ -4,16 +4,20 @@ using UnityEngine;
 public class SheepSpawner : MonoBehaviour
 {
     public GameObject sheepPrefab;
+    public GameObject zombiePrefab;
     public Transform[] spawnPoints;
     private List<GameObject> spawnedSheep = new List<GameObject>();
+    private List<GameObject> spawnedZombie = new List<GameObject>();
 
-    public int maxSheepCount = 10;
+    public int maxSheepCount = 5;
+    public int maxZombieCount = 5;
 
     void Start()
     {
         for (int i = 0; i < maxSheepCount; i++)
         {
             SpawnSheep();
+            SpawnZombie();
         }
     }
 
@@ -33,9 +37,30 @@ public class SheepSpawner : MonoBehaviour
         spawnedSheep.Add(newSheep);
     }
 
+    void SpawnZombie()
+    {
+        if (spawnedZombie.Count >= maxZombieCount) return;
+
+        Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+        GameObject newZombie = Instantiate(zombiePrefab, spawnPoint.position, spawnPoint.rotation);
+        Zombie_Data zombieHealth = newZombie.GetComponent<Zombie_Data>();
+
+        if (zombieHealth != null)
+        {
+            zombieHealth.OnDeathEvent += OnZombieDeath;
+        }
+
+        spawnedZombie.Add(newZombie);
+    }
+
     void OnSheepDeath(GameObject deadSheep)
     {
         spawnedSheep.Remove(deadSheep);
         SpawnSheep(); // Ölen koyunun yerine yenisini spawn et
+    }
+    void OnZombieDeath(GameObject deadZombie)
+    {
+        spawnedZombie.Remove(deadZombie);
+        SpawnZombie(); 
     }
 }

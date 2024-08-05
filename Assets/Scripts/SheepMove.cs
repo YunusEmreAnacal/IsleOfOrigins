@@ -6,7 +6,6 @@ public class SheepMove : MonoBehaviour
 {
     public float wanderRadius = 10f;
     public float wanderTimer = 5f;
-    private Transform target;
     private NavMeshAgent agent;
     private float timer;
 
@@ -21,7 +20,6 @@ public class SheepMove : MonoBehaviour
 
     void Update()
     {
-        // Eðer koyun kaçýyorsa, yol bulma iþlemi yapýlmamalýdýr
         
             timer += Time.deltaTime;
 
