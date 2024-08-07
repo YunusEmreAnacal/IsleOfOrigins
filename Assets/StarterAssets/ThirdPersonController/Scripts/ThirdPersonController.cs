@@ -131,11 +131,13 @@ namespace StarterAssets
     public GameObject standButton;
     private Animator anim;
     private CharacterController controller;
+    private EquipItem item;
 
     private float standHeight;
     [SerializeField]  private float crouchHeight;
     [SerializeField] private GameObject HeadPosition;
     [SerializeField] private bool isCrouch = false;
+    private bool isE;
     [SerializeField] private bool Canstand ;
 
     float x;
@@ -188,10 +190,18 @@ namespace StarterAssets
     public void Attack()
         {
             
-            if (!isCrouch)
+            if (!isCrouch )
             {
-                int attackMode = Random.Range(1, 3);
-                anim.SetTrigger("attack" + attackMode);
+                if (!isE)
+                {
+                    int attackMode = Random.Range(1, 3);
+                    anim.SetTrigger("attack" + attackMode);
+                }
+                else
+                {
+                    anim.SetTrigger("axeAttack");
+                }
+                
             }
 
             Vector3 rayOrigin = transform.position + Vector3.up * 0.5f;
@@ -202,23 +212,23 @@ namespace StarterAssets
             RaycastHit hit;
             if (Physics.Raycast(rayOrigin, rayDirection, out hit, attackRange))
             {
-                Debug.Log("Hit something: " + hit.collider.gameObject.name);
+                
                 SheepHealth sheepHealth = hit.collider.GetComponent<SheepHealth>();
                 Zombie_Data zombieHealth  = hit.collider.GetComponent<Zombie_Data>();
                 if (sheepHealth != null)
                 {
-                    Debug.Log("Hit a sheep!");
+                    
                     sheepHealth.TakeDamage(attackDamage, transform.position);
                 }
                 else if (zombieHealth != null)
                 {
-                    Debug.Log("Hit a Zombie");
+                    
                     zombieHealth.TakeDamage(attackDamage, transform.position);
                 }
             }
             else
             {
-                Debug.Log("Raycast didn't hit anything.");
+                
             }
         }
 
@@ -278,9 +288,8 @@ namespace StarterAssets
         else
         {
             Canstand = true;
-        }  
+        }
 
-            
 
         }
 

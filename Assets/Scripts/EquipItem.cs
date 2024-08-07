@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+using UnityEngine.UI;
 
 public class EquipItem : MonoBehaviour
 {
@@ -30,11 +31,14 @@ public class EquipItem : MonoBehaviour
     [SerializeField] private Transform IKRightHandPos;
     [SerializeField] private Transform IKLeftHandPos;
 
-    private bool IsEquiped;
+    public bool IsEquiped = false;
+
+    
 
     void Start()
     {
         playerAnimator = GetComponent<Animator>();
+        
     }
 
     private void Update()
@@ -69,8 +73,8 @@ public class EquipItem : MonoBehaviour
         Ray topRay = new Ray(transform.position + rayOffset, transform.forward);
         Ray bottomRay = new Ray(transform.position + Vector3.up * 0.175f, transform.forward);
 
-        Debug.DrawRay(transform.position + rayOffset, transform.forward * rayLength, Color.red);
-        Debug.DrawRay(transform.position + Vector3.up * 0.175f, transform.forward * rayLength, Color.green);
+        Debug.DrawRay(transform.position + rayOffset, transform.forward * rayLength, Color.black);
+        Debug.DrawRay(transform.position + Vector3.up * 0.175f, transform.forward * rayLength, Color.yellow);
 
         Physics.Raycast(topRay, out topRayHitInfo, rayLength, itemMask);
         Physics.Raycast(bottomRay, out bottomRayHitInfo, rayLength, itemMask);
@@ -96,8 +100,9 @@ public class EquipItem : MonoBehaviour
         currentItem.IsRotating = false;
 
         currentItem.ChangeItemBehaviour();
-
-        IsEquiped = true;
+        currentItem.equipButton.SetActive(false);
+        currentItem.unEquipButton.SetActive(true);
+        IsEquiped = true;//tpscontroller scriptine taþýýýýý
     }
 
     public void UnEquip()
@@ -116,7 +121,8 @@ public class EquipItem : MonoBehaviour
 
             currentItem.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
             currentItem.GetComponent<Rigidbody>().isKinematic = false;
-
+            currentItem.equipButton.SetActive(true);
+            currentItem.unEquipButton.SetActive(false);
             currentItem = null;
         }
     }

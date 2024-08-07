@@ -5,8 +5,10 @@ using UnityEngine;
 public class GrabbableItems : MonoBehaviour
 {
    private Rigidbody itemBody;
-
+    private EquipItem equip;
     [SerializeField] private float rotationSpeed;
+    [SerializeField] public GameObject equipButton;
+    [SerializeField] public GameObject unEquipButton;
 
     public bool IsRotating { get; set; }
 
@@ -18,7 +20,7 @@ public class GrabbableItems : MonoBehaviour
         {
             itemBody.isKinematic = true;
         }
-
+        equipButton.SetActive(false);
         IsRotating = true;
     }
 
@@ -31,12 +33,25 @@ public class GrabbableItems : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+
+        if (other.gameObject.CompareTag("Player"))
+        {
+            equipButton.SetActive(true);
+        }
+
         if (other.gameObject.CompareTag("Ground"))
         {
             if (itemBody)
                 itemBody.constraints = RigidbodyConstraints.FreezePosition;
-
             IsRotating = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            equipButton.SetActive(false);
         }
     }
 
