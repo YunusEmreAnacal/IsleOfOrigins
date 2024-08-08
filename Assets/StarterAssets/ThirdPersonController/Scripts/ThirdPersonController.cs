@@ -228,7 +228,7 @@ namespace StarterAssets
             if (Physics.Raycast(rayOrigin, rayDirection, out hit, attackRange))
             {
 
-                SheepHealth sheepHealth = hit.collider.GetComponent<SheepHealth>();
+                Sheep_Data sheepHealth = hit.collider.GetComponent<Sheep_Data>();
                 Zombie_Data zombieHealth = hit.collider.GetComponent<Zombie_Data>();
                 if (sheepHealth != null)
                 {

@@ -20,7 +20,7 @@ public class Zombie_Data : MonoBehaviour
     public float attackDamage = 25f;
 
     private Vector3 lastAttackerPosition;
-    private bool isDead = false; // Koyunun ölü olup olmadığını kontrol etmek için
+    private bool isDead = false; 
 
     public delegate void DeathEventHandler(GameObject deadZombie);
     public event DeathEventHandler OnDeathEvent;

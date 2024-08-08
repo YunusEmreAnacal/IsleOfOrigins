@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GrabbableItems : MonoBehaviour
 {
-   private Rigidbody itemBody;
+    private Rigidbody itemBody;
     private EquipItem equip;
     [SerializeField] private float rotationSpeed;
     [SerializeField] public GameObject equipButton;

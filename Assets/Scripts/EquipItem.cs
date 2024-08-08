@@ -40,7 +40,6 @@ public class EquipItem : MonoBehaviour
     void Start()
     {
         playerAnimator = GetComponent<Animator>();
-        // Eðer `ThirdPersonController` ayný GameObject üzerindeyse
         if (controller == null)
         {
             controller = GetComponent<ThirdPersonController>();

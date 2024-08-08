@@ -71,14 +71,13 @@ public class ZombieController : MonoBehaviour
             Debug.Log(distanceToTarget);
             RotateToTarget();
             animator.SetBool("isAttacking", true);
-            // Ensure that the agent doesn't move away when attacking
             //agent.isStopped = true;
         }
         else
         {
             animator.SetBool("isAttacking", false);
-            animator.SetBool("isWalking", agent.velocity.magnitude > 0.1f); // Walk animation if moving
-            //agent.isStopped = false; // Allow the agent to move again
+            animator.SetBool("isWalking", agent.velocity.magnitude > 0.1f); 
+            //agent.isStopped = false; 
         }
 
        

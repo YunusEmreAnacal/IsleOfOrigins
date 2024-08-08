@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SheepSpawner : MonoBehaviour
+public class Spawner : MonoBehaviour
 {
     public GameObject sheepPrefab;
     public GameObject zombiePrefab;
@@ -27,7 +27,7 @@ public class SheepSpawner : MonoBehaviour
 
         Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
         GameObject newSheep = Instantiate(sheepPrefab, spawnPoint.position, spawnPoint.rotation);
-        SheepHealth sheepHealth = newSheep.GetComponent<SheepHealth>();
+        Sheep_Data sheepHealth = newSheep.GetComponent<Sheep_Data>();
 
         if (sheepHealth != null)
         {

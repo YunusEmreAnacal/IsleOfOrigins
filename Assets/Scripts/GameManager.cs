@@ -28,7 +28,6 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        // Oyun başlangıç ayarları
         gameOverUI.SetActive(false);
     }
 
@@ -40,7 +39,6 @@ public class GameManager : MonoBehaviour
         controllerUI.SetActive(false);
         gameOverUI.SetActive(true);
 
-        // Oyunu durdur
         Time.timeScale = 0f;
     }
 

@@ -30,7 +30,6 @@ public class SheepMove : MonoBehaviour
                 timer = 0;
             }
 
-            // Animator walk parametresini ayarlama
             animator.SetBool("walk", agent.velocity.magnitude > 0.1f);
         
     }

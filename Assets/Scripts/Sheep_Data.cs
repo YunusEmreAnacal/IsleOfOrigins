@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class SheepHealth : MonoBehaviour
+public class Sheep_Data : MonoBehaviour
 {
     public float maxHealth = 100f;
     private float currentHealth;
@@ -35,14 +35,14 @@ public class SheepHealth : MonoBehaviour
 
     public void TakeDamage(float damage, Vector3 attackerPosition)
     {
-        if (isDead) return; // Koyun ölü ise işlem yapma
+        if (isDead) return; 
 
         currentHealth -= damage;
         lastAttackerPosition = attackerPosition; // Attacker position bilgisi saklanıyor
 
         if (currentHealth <= 0)
         {
-            Die(); // Ölüm işlemini başlat
+            Die(); // Ölüm 
         }
         else
         {
@@ -53,9 +53,9 @@ public class SheepHealth : MonoBehaviour
 
     private void Die()
     {
-        if (isDead) return; // Koyun zaten ölü ise hiçbir şey yapma
+        if (isDead) return; 
 
-        isDead = true; // Koyunun ölü olduğunu işaretle
+        isDead = true; 
         animator.SetTrigger("die");
         agent.isStopped = true;
         agent.enabled = false;
@@ -70,7 +70,7 @@ public class SheepHealth : MonoBehaviour
     {
         // Ölüm rengi değişimi
         sheepRenderer.material.color = hitColor;
-        yield return new WaitForSeconds(colorChangeDuration);
+        yield return new WaitForSeconds(1f);
 
         // Meal objelerinin spawn edilmesi
         int numberOfMeals = UnityEngine.Random.Range(1, 4);
