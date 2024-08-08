@@ -1,3 +1,4 @@
+using StarterAssets;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -32,13 +33,18 @@ public class EquipItem : MonoBehaviour
     [SerializeField] private Transform IKLeftHandPos;
 
     public bool IsEquiped = false;
+    public ThirdPersonController controller;
 
-    
+
 
     void Start()
     {
         playerAnimator = GetComponent<Animator>();
-        
+        // Eðer `ThirdPersonController` ayný GameObject üzerindeyse
+        if (controller == null)
+        {
+            controller = GetComponent<ThirdPersonController>();
+        }
     }
 
     private void Update()
@@ -102,6 +108,7 @@ public class EquipItem : MonoBehaviour
         currentItem.ChangeItemBehaviour();
         currentItem.equipButton.SetActive(false);
         currentItem.unEquipButton.SetActive(true);
+        controller.SetItemEquipped(true);
         IsEquiped = true;//tpscontroller scriptine taþýýýýý
     }
 
@@ -123,6 +130,7 @@ public class EquipItem : MonoBehaviour
             currentItem.GetComponent<Rigidbody>().isKinematic = false;
             currentItem.equipButton.SetActive(true);
             currentItem.unEquipButton.SetActive(false);
+            controller.SetItemEquipped(false);
             currentItem = null;
         }
     }

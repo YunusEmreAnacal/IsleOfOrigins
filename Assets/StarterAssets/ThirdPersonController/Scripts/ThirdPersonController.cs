@@ -127,25 +127,34 @@ namespace StarterAssets
 
 
     //MY CODES ***************************************************************************************************
-    public GameObject crouchButton;
-    public GameObject standButton;
-    private Animator anim;
-    private CharacterController controller;
-    private EquipItem item;
+        public GameObject crouchButton;
+        public GameObject standButton;
+        private Animator anim;
+        private CharacterController controller;
+        private EquipItem item;
 
-    private float standHeight;
-    [SerializeField]  private float crouchHeight;
-    [SerializeField] private GameObject HeadPosition;
-    [SerializeField] private bool isCrouch = false;
-    private bool isE;
-    [SerializeField] private bool Canstand ;
+        private float standHeight;
+        [SerializeField]  private float crouchHeight;
+        [SerializeField] private GameObject HeadPosition;
+        [SerializeField] private bool isCrouch = false;
+        [SerializeField] private bool Canstand ;
 
-    float x;
-    float y;
+        float x;
+        float y;
 
-        public float attackRange = 10f;
-        public float attackDamage = 25f;
+        public float attackRange = 1f;
+        private float damage;
+        public float meleeAttackDamage = 25f;
+        public float axeAttackDamage = 50f;
         public LayerMask sheepLayer;
+
+        private bool isItemEquipped = false;
+
+        public void SetItemEquipped(bool equipped)
+        {
+            isItemEquipped = equipped;
+            Debug.Log(isItemEquipped);
+        }
 
 
         public void ToggleCrouch()
@@ -192,17 +201,23 @@ namespace StarterAssets
             
             if (!isCrouch )
             {
-                if (!isE)
-                {
-                    int attackMode = Random.Range(1, 3);
-                    anim.SetTrigger("attack" + attackMode);
-                }
-                else
+                if (isItemEquipped)
                 {
                     anim.SetTrigger("axeAttack");
+                    damage = axeAttackDamage;
                 }
-                
+                else 
+                { 
+                    int attackMode = Random.Range(1, 3);
+                    anim.SetTrigger("attack" + attackMode);
+                    damage = meleeAttackDamage;
+                }
             }
+
+        }
+    
+        public void OnApplyDamage()
+        {
 
             Vector3 rayOrigin = transform.position + Vector3.up * 0.5f;
             Vector3 rayDirection = transform.forward + Vector3.down * 0.3f;
@@ -212,27 +227,28 @@ namespace StarterAssets
             RaycastHit hit;
             if (Physics.Raycast(rayOrigin, rayDirection, out hit, attackRange))
             {
-                
+
                 SheepHealth sheepHealth = hit.collider.GetComponent<SheepHealth>();
-                Zombie_Data zombieHealth  = hit.collider.GetComponent<Zombie_Data>();
+                Zombie_Data zombieHealth = hit.collider.GetComponent<Zombie_Data>();
                 if (sheepHealth != null)
                 {
-                    
-                    sheepHealth.TakeDamage(attackDamage, transform.position);
+
+                    sheepHealth.TakeDamage(damage, transform.position);
                 }
                 else if (zombieHealth != null)
                 {
-                    
-                    zombieHealth.TakeDamage(attackDamage, transform.position);
+
+                    zombieHealth.TakeDamage(damage, transform.position);
                 }
             }
             else
             {
-                
+
             }
         }
-
     
+
+
     //ENDS**********************************************************************************
         private void Awake()
         {
