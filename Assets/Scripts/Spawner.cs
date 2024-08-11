@@ -11,6 +11,7 @@ public class Spawner : MonoBehaviour
 
     public int maxSheepCount = 5;
     public int maxZombieCount = 5;
+    //gözükmeyen yerde spawn isVisible
 
     void Start()
     {
@@ -29,11 +30,7 @@ public class Spawner : MonoBehaviour
         GameObject newSheep = Instantiate(sheepPrefab, spawnPoint.position, spawnPoint.rotation);
         Sheep_Data sheepHealth = newSheep.GetComponent<Sheep_Data>();
 
-        if (sheepHealth != null)
-        {
-            sheepHealth.OnDeathEvent += OnSheepDeath;
-        }
-
+        sheepHealth.OnDeathEvent += OnSheepDeath;
         spawnedSheep.Add(newSheep);
     }
 
@@ -45,10 +42,9 @@ public class Spawner : MonoBehaviour
         GameObject newZombie = Instantiate(zombiePrefab, spawnPoint.position, spawnPoint.rotation);
         Zombie_Data zombieHealth = newZombie.GetComponent<Zombie_Data>();
 
-        if (zombieHealth != null)
-        {
-            zombieHealth.OnDeathEvent += OnZombieDeath;
-        }
+
+        zombieHealth.OnDeathEvent += OnZombieDeath;
+
 
         spawnedZombie.Add(newZombie);
     }
@@ -61,6 +57,6 @@ public class Spawner : MonoBehaviour
     void OnZombieDeath(GameObject deadZombie)
     {
         spawnedZombie.Remove(deadZombie);
-        SpawnZombie(); 
+        SpawnZombie();
     }
 }

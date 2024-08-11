@@ -1,107 +1,48 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
-public class Sheep_Data : MonoBehaviour
+public class Sheep_Data : NPC_Data
 {
-    public float maxHealth = 100f;
-    private float currentHealth;
-    private Animator animator;
-    private NavMeshAgent agent;
-    public Rigidbody rb;
+
     public float knockbackForce = 10f;
     public GameObject mealPrefab;
 
-    public Renderer sheepRenderer;
-    public Color hitColor = Color.red;
-    public float colorChangeDuration = 0.2f;
-    private Color originalColor;
-
-    private Vector3 lastAttackerPosition;
-    private bool isDead = false; // Koyunun ölü olup olmadığını kontrol etmek için
-
-    public delegate void DeathEventHandler(GameObject deadSheep);
-    public event DeathEventHandler OnDeathEvent;
-
-    private void Start()
+    public override void  TakeDamage(float damage, Vector3 attackerPosition)
     {
-        currentHealth = maxHealth;
-        animator = GetComponent<Animator>();
-        agent = GetComponent<NavMeshAgent>();
-        rb = GetComponent<Rigidbody>();
-        originalColor = sheepRenderer.material.color;
-    }
+        base.TakeDamage(damage, attackerPosition);
 
-    public void TakeDamage(float damage, Vector3 attackerPosition)
-    {
-        if (isDead) return; 
-
-        currentHealth -= damage;
-        lastAttackerPosition = attackerPosition; // Attacker position bilgisi saklanıyor
-
-        if (currentHealth <= 0)
+        if (currentHealth > 0)
         {
-            Die(); // Ölüm 
-        }
-        else
-        {
-            StartCoroutine(ChangeColor());
             FleeFromAttacker();
         }
+        
     }
 
-    private void Die()
+
+    protected override IEnumerator DieRoutine()
     {
-        if (isDead) return; 
-
-        isDead = true; 
-        animator.SetTrigger("die");
-        agent.isStopped = true;
-        agent.enabled = false;
-        rb.isKinematic = true;
-        rb.velocity = Vector3.zero;
-
-        // Ölüm olayını tetikle
-        StartCoroutine(DieRoutine());
-    }
-
-    private IEnumerator DieRoutine()
-    {
-        // Ölüm rengi değişimi
-        sheepRenderer.material.color = hitColor;
-        yield return new WaitForSeconds(1f);
+        yield return base.DieRoutine();
 
         // Meal objelerinin spawn edilmesi
-        int numberOfMeals = UnityEngine.Random.Range(1, 4);
+        int numberOfMeals = Random.Range(1, 4);
         for (int i = 0; i < numberOfMeals; i++)
         {
-            Vector3 spawnPosition = transform.position + UnityEngine.Random.insideUnitSphere * 1.5f;
-            spawnPosition.y = transform.position.y;
-            Instantiate(mealPrefab, spawnPosition, Quaternion.identity);
+            Vector3 spawnPosition = transform.position + Random.insideUnitSphere * 1.5f;
+            spawnPosition.y = transform.position.y; // raycast 
+            Instantiate(mealPrefab, spawnPosition, Random.rotation);
         }
-
-        // Ölüm olayını tetikle
-        OnDeathEvent?.Invoke(gameObject);
-
-        // Koyunu yok et
-        Destroy(gameObject);
     }
 
     private void FleeFromAttacker()
     {
-        if (isDead) return;
-
         Vector3 fleeDirection = (transform.position - lastAttackerPosition).normalized * 5f;
         agent.SetDestination(transform.position + fleeDirection);
     }
 
-    private IEnumerator ChangeColor()
-    {
-        sheepRenderer.material.color = hitColor;
-        yield return new WaitForSeconds(colorChangeDuration);
-        sheepRenderer.material.color = originalColor;
-    }
 }
 
 

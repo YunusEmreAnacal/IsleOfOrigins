@@ -13,7 +13,6 @@ public class EquipItem : MonoBehaviour
     [SerializeField] private LayerMask itemMask;
     private RaycastHit topRayHitInfo;
     private RaycastHit bottomRayHitInfo;
-
     private GrabbableItems currentItem;
 
     [SerializeField] private Transform equipPos;
@@ -63,7 +62,7 @@ public class EquipItem : MonoBehaviour
         if (currentItem)
         {
 
-            currentItem.transform.parent = equipPos.transform;
+            currentItem.transform.parent = equipPos.transform; //eline alÄ±nca
             currentItem.transform.position = equipPos.position;
             currentItem.transform.rotation = equipPos.rotation;
 
@@ -73,7 +72,7 @@ public class EquipItem : MonoBehaviour
 
     }
 
-    private void RaycastsHandler()
+    private void RaycastsHandler() // box
     {
         Ray topRay = new Ray(transform.position + rayOffset, transform.forward);
         Ray bottomRay = new Ray(transform.position + Vector3.up * 0.175f, transform.forward);
@@ -94,7 +93,7 @@ public class EquipItem : MonoBehaviour
             currentItem = topRayHitInfo.transform.gameObject.GetComponent<GrabbableItems>();
         }
 
-        if (bottomRayHitInfo.collider)
+        if (bottomRayHitInfo.collider != null)
         {
             currentItem = bottomRayHitInfo.transform.gameObject.GetComponent<GrabbableItems>();
         }
@@ -108,10 +107,10 @@ public class EquipItem : MonoBehaviour
         currentItem.equipButton.SetActive(false);
         currentItem.unEquipButton.SetActive(true);
         controller.SetItemEquipped(true);
-        IsEquiped = true;//tpscontroller scriptine taþýýýýý
+        IsEquiped = true;//tpscontroller scriptine taï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     }
 
-    public void UnEquip()
+    public void UnEquip() // button
     {
         if (IsEquiped)
         {
@@ -125,7 +124,7 @@ public class EquipItem : MonoBehaviour
             IsEquiped = false;
             currentItem.transform.parent = null;
 
-            currentItem.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+            currentItem.transform.rotation = Quaternion.identity;
             currentItem.GetComponent<Rigidbody>().isKinematic = false;
             currentItem.equipButton.SetActive(true);
             currentItem.unEquipButton.SetActive(false);

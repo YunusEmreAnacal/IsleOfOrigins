@@ -2,12 +2,12 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class SheepMove : MonoBehaviour
+public class SheepController : MonoBehaviour
 {
     public float wanderRadius = 10f;
     public float wanderTimer = 5f;
     private NavMeshAgent agent;
-    private float timer;
+    private float timer; 
 
     private Animator animator;
 
@@ -19,7 +19,7 @@ public class SheepMove : MonoBehaviour
     }
 
     void Update()
-    {
+    {      //waypoint 
         
             timer += Time.deltaTime;
 

@@ -10,6 +10,8 @@ public abstract class NPC_Data : MonoBehaviour
     protected NavMeshAgent agent;
     public Rigidbody rb;
 
+    [SerializeField] private float dieAnimationDuration;
+
     public Renderer npcRenderer;
     public Color hitColor = Color.red;
     public float colorChangeDuration = 0.2f;
@@ -34,7 +36,7 @@ public abstract class NPC_Data : MonoBehaviour
     {
         if (isDead) return;
 
-        currentHealth -= damage;
+        currentHealth -= damage; //
         lastAttackerPosition = attackerPosition;
 
         if (currentHealth <= 0)
@@ -52,7 +54,7 @@ public abstract class NPC_Data : MonoBehaviour
         if (isDead) return;
 
         isDead = true;
-        animator.SetTrigger("die");
+        animator.SetTrigger("die"); // ragdoll 
         agent.isStopped = true;
         agent.enabled = false;
         rb.isKinematic = true;
@@ -64,7 +66,7 @@ public abstract class NPC_Data : MonoBehaviour
     protected virtual IEnumerator DieRoutine()
     {
         npcRenderer.material.color = hitColor;
-        yield return new WaitForSeconds(2.5f);
+        yield return new WaitForSeconds(dieAnimationDuration);
 
         OnDeathEvent?.Invoke(gameObject);
         Destroy(gameObject);
