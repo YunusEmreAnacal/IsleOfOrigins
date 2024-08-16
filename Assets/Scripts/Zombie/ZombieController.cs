@@ -58,7 +58,7 @@ public class ZombieController : MonoBehaviour
         Vector3 randDirection = Random.insideUnitSphere * dist;
         randDirection += origin;
         NavMeshHit navHit;
-        NavMesh.SamplePosition(randDirection, out navHit, dist, layermask);//harita dışı
+        NavMesh.SamplePosition(randDirection, out navHit, dist, layermask); //harita dışı
         return navHit.position;
     }
 

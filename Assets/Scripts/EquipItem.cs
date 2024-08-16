@@ -7,18 +7,17 @@ using UnityEngine.UI;
 
 public class EquipItem : MonoBehaviour
 {
-    [Header("Ray Settings")]
-    [SerializeField][Range(0.0f, 2.0f)] private float rayLength;
-    [SerializeField] private Vector3 rayOffset;
+    [Header("BoxCast Settings")]
+    [SerializeField][Range(0.0f, 2.0f)] private float boxCastLength = 2.0f; // BoxCast uzunluğu
+    [SerializeField] private Vector3 boxSize = new Vector3(0.5f, 0.5f, 1.0f); // BoxCast boyutları
+    [SerializeField] private Vector3 boxOffset = new Vector3(0, 0.175f, 0); // BoxCast'in konumu
     [SerializeField] private LayerMask itemMask;
-    private RaycastHit topRayHitInfo;
-    private RaycastHit bottomRayHitInfo;
+
     private GrabbableItems currentItem;
 
     [SerializeField] private Transform equipPos;
 
     private Animator playerAnimator;
-
 
     [Header("Right Hand Target")]
     [SerializeField] private TwoBoneIKConstraint rightHandIK;
@@ -34,8 +33,6 @@ public class EquipItem : MonoBehaviour
     public bool IsEquiped = false;
     public ThirdPersonController controller;
 
-
-
     void Start()
     {
         playerAnimator = GetComponent<Animator>();
@@ -44,73 +41,49 @@ public class EquipItem : MonoBehaviour
             controller = GetComponent<ThirdPersonController>();
         }
     }
-
-    private void Update()
+    private void BoxCastHandler()
     {
-        /*
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            Equip();
-        }
+        Vector3 origin = transform.position + boxOffset; // BoxCast'in başlangıç pozisyonu
+        Vector3 direction = transform.forward; // BoxCast'in yönü
 
-        if (Input.GetKeyDown(KeyCode.Q))
+        // BoxCast tüm çarpan nesneleri saklamak için
+        RaycastHit[] hits = Physics.BoxCastAll(origin, boxSize * 0.5f, direction, Quaternion.identity, boxCastLength, itemMask);
+
+        foreach (RaycastHit hit in hits)
         {
-            UnEquip();
+            // Çarptığınız nesnelerle etkileşime geçin
+            currentItem = hit.transform.GetComponent<GrabbableItems>();
+
         }
-        */
+    }
+
+
+    public void Equip()
+    {
+        BoxCastHandler();
 
         if (currentItem)
         {
-
-            currentItem.transform.parent = equipPos.transform; //eline alınca
+            currentItem.transform.parent = equipPos.transform; // Eline alınca
             currentItem.transform.position = equipPos.position;
             currentItem.transform.rotation = equipPos.rotation;
 
             leftHandIK.weight = 0f;
-
         }
 
-    }
-
-    private void RaycastsHandler() // box
-    {
-        Ray topRay = new Ray(transform.position + rayOffset, transform.forward);
-        Ray bottomRay = new Ray(transform.position + Vector3.up * 0.175f, transform.forward);
-
-        Debug.DrawRay(transform.position + rayOffset, transform.forward * rayLength, Color.black);
-        Debug.DrawRay(transform.position + Vector3.up * 0.175f, transform.forward * rayLength, Color.yellow);
-
-        Physics.Raycast(topRay, out topRayHitInfo, rayLength, itemMask);
-        Physics.Raycast(bottomRay, out bottomRayHitInfo, rayLength, itemMask);
-    }
-
-    public void Equip()
-    {
-        RaycastsHandler();
-
-        if (topRayHitInfo.collider != null)
+        if (currentItem != null)
         {
-            currentItem = topRayHitInfo.transform.gameObject.GetComponent<GrabbableItems>();
+            currentItem.IsRotating = false;
+
+            currentItem.ChangeItemBehaviour();
+            currentItem.equipButton.SetActive(false);
+            currentItem.unEquipButton.SetActive(true);
+            controller.SetItemEquipped(true);
+            IsEquiped = true;
         }
-
-        if (bottomRayHitInfo.collider != null)
-        {
-            currentItem = bottomRayHitInfo.transform.gameObject.GetComponent<GrabbableItems>();
-        }
-
-        if (!currentItem) return;
-
-        // Stop weapon rotation.
-        currentItem.IsRotating = false;
-
-        currentItem.ChangeItemBehaviour();
-        currentItem.equipButton.SetActive(false);
-        currentItem.unEquipButton.SetActive(true);
-        controller.SetItemEquipped(true);
-        IsEquiped = true;//tpscontroller scriptine ta������
     }
 
-    public void UnEquip() // button
+    public void UnEquip() // buttona bağlı kalmasın
     {
         if (IsEquiped)
         {

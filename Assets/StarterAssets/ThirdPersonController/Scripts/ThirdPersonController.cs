@@ -201,6 +201,7 @@ namespace StarterAssets
             
             if (!isCrouch )
             {
+                anim.SetTrigger("LayerTrigger");
                 if (isItemEquipped)
                 {
                     anim.SetTrigger("axeAttack");

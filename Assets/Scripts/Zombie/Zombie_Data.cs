@@ -25,7 +25,6 @@ public class Zombie_Data : NPC_Data
             
             if (charHealth != null)
             {
-                Debug.Log("Hit a sheep!");
                 charHealth.TakeDamage(attackDamage, transform.position);
             }
             

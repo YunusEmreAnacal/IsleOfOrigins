@@ -6,27 +6,56 @@ public class Spawner : MonoBehaviour
     public GameObject sheepPrefab;
     public GameObject zombiePrefab;
     public Transform[] spawnPoints;
+    public Camera playerCamera; // Kamerayı burada belirleyin
+
+    private List<Transform> availableSpawnPoints = new List<Transform>();
     private List<GameObject> spawnedSheep = new List<GameObject>();
-    private List<GameObject> spawnedZombie = new List<GameObject>();
+    private List<GameObject> spawnedZombies = new List<GameObject>();
 
     public int maxSheepCount = 5;
     public int maxZombieCount = 5;
-    //gözükmeyen yerde spawn isVisible
 
     void Start()
     {
+        UpdateAvailableSpawnPoints();
+
         for (int i = 0; i < maxSheepCount; i++)
         {
             SpawnSheep();
+        }
+
+        for (int i = 0; i < maxZombieCount; i++)
+        {
             SpawnZombie();
         }
     }
 
+    void UpdateAvailableSpawnPoints()
+    {
+        availableSpawnPoints.Clear();
+
+        foreach (Transform spawnPoint in spawnPoints)
+        {
+            if (!IsPointVisibleFromCamera(spawnPoint.position))
+            {
+                availableSpawnPoints.Add(spawnPoint);
+            }
+        }
+    }
+
+    bool IsPointVisibleFromCamera(Vector3 point)
+    {
+        Plane[] planes = GeometryUtility.CalculateFrustumPlanes(playerCamera);
+        return GeometryUtility.TestPlanesAABB(planes, new Bounds(point, Vector3.zero));
+    }
+
     void SpawnSheep()
     {
-        if (spawnedSheep.Count >= maxSheepCount) return;
+        if (spawnedSheep.Count >= maxSheepCount || availableSpawnPoints.Count == 0) return;
 
-        Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+        Transform spawnPoint = GetRandomAvailableSpawnPoint();
+        if (spawnPoint == null) return;
+
         GameObject newSheep = Instantiate(sheepPrefab, spawnPoint.position, spawnPoint.rotation);
         Sheep_Data sheepHealth = newSheep.GetComponent<Sheep_Data>();
 
@@ -36,27 +65,41 @@ public class Spawner : MonoBehaviour
 
     void SpawnZombie()
     {
-        if (spawnedZombie.Count >= maxZombieCount) return;
+        if (spawnedZombies.Count >= maxZombieCount || availableSpawnPoints.Count == 0) return;
 
-        Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+        Transform spawnPoint = GetRandomAvailableSpawnPoint();
+        if (spawnPoint == null) return;
+
         GameObject newZombie = Instantiate(zombiePrefab, spawnPoint.position, spawnPoint.rotation);
         Zombie_Data zombieHealth = newZombie.GetComponent<Zombie_Data>();
 
-
         zombieHealth.OnDeathEvent += OnZombieDeath;
+        spawnedZombies.Add(newZombie);
+    }
 
+    Transform GetRandomAvailableSpawnPoint()
+    {
+        if (availableSpawnPoints.Count == 0) return null;
 
-        spawnedZombie.Add(newZombie);
+        int randomIndex = Random.Range(0, availableSpawnPoints.Count);
+        Transform selectedPoint = availableSpawnPoints[randomIndex];
+        availableSpawnPoints.RemoveAt(randomIndex);
+        return selectedPoint;
     }
 
     void OnSheepDeath(GameObject deadSheep)
     {
         spawnedSheep.Remove(deadSheep);
-        SpawnSheep(); // Ölen koyunun yerine yenisini spawn et
+        UpdateAvailableSpawnPoints(); // Görünür alan kontrolünü yeniden yap
+        SpawnSheep(); // Yeni bir koyun spawn et
     }
+
     void OnZombieDeath(GameObject deadZombie)
     {
-        spawnedZombie.Remove(deadZombie);
-        SpawnZombie();
+        spawnedZombies.Remove(deadZombie);
+        UpdateAvailableSpawnPoints(); // Görünür alan kontrolünü yeniden yap
+        SpawnZombie(); // Yeni bir zombi spawn et
     }
+
+    
 }
