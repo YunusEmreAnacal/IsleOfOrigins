@@ -37,7 +37,9 @@ namespace StarterAssets
         public float JumpHeight = 1.2f;
 
         [Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
-        public float Gravity = -15.0f;
+        public float Gravity;
+        public float walkingGravity = -15.0f;
+        public float swimminggravity = -0f;
 
         [Space(10)]
         [Tooltip("Time required to pass before being able to jump again. Set to 0f to instantly jump again")]
@@ -99,6 +101,8 @@ namespace StarterAssets
         private int _animIDJump;
         private int _animIDFreeFall;
         private int _animIDMotionSpeed;
+        private int _animIDSwimming;
+        private int _animIDSwimIdle;
 
 #if ENABLE_INPUT_SYSTEM 
         private PlayerInput _playerInput;
@@ -150,6 +154,9 @@ namespace StarterAssets
 
         private bool isItemEquipped = false;
 
+        public bool isSwimming = false;
+        
+
         public void SetItemEquipped(bool equipped)
         {
             isItemEquipped = equipped;
@@ -159,14 +166,18 @@ namespace StarterAssets
 
         public void ToggleCrouch()
     {
-        if (isCrouch && Canstand)
-        {
-            StandUp();
-        }
-        else if (!isCrouch && Canstand)
-        {
-            Crouch();
-        }
+            if (!isSwimming)
+            {
+                if (isCrouch && Canstand)
+                {
+                    StandUp();
+                }
+                else if (!isCrouch && Canstand)
+                {
+                    Crouch();
+                }
+            }
+        
     }
 
     private void Crouch()
@@ -199,7 +210,7 @@ namespace StarterAssets
     public void Attack()
         {
             
-            if (!isCrouch )
+            if (!isCrouch && !isSwimming)
             {
                 anim.SetTrigger("LayerTrigger");
                 if (isItemEquipped)
@@ -324,6 +335,8 @@ namespace StarterAssets
             _animIDJump = Animator.StringToHash("Jump");
             _animIDFreeFall = Animator.StringToHash("FreeFall");
             _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
+            _animIDSwimming = Animator.StringToHash("Swimming");
+            _animIDSwimIdle = Animator.StringToHash("SwimmingIdle");
         }
 
         private void GroundedCheck()
@@ -364,6 +377,16 @@ namespace StarterAssets
 
         protected virtual void Move()
         {
+            // Yüzme mekaniği için yerçekimi ayarı
+            if (isSwimming)
+            {
+                Gravity = swimminggravity;
+            }
+            else
+            {
+                Gravity = walkingGravity;
+            }
+
             // Hedef hızı belirleme
             float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
 
@@ -373,125 +396,141 @@ namespace StarterAssets
             // Mevcut hız
             float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
             float speedOffset = 0.1f;
+
             // Hızlanma ve yavaşlama
             if (currentHorizontalSpeed < targetSpeed - speedOffset ||
                 currentHorizontalSpeed > targetSpeed + speedOffset)
             {
-                _speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed,
-                    Time.deltaTime * SpeedChangeRate);
+                _speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed, Time.deltaTime * SpeedChangeRate);
             }
             else
             {
                 _speed = targetSpeed;
             }
 
-            // Normalize input direction
+            // Girdi yönünü normalize et
             Vector3 inputDirection = Vector3.ClampMagnitude(new Vector3(_input.move.x, 0, _input.move.y), 1);
 
-            // Always face the camera direction
+            // Her zaman kameraya doğru yüzünü döndür
             _targetRotation = _mainCamera.transform.eulerAngles.y;
             float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, RotationSmoothTime);
             transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
 
-            Vector3 targetDirection = Vector3.ClampMagnitude(Quaternion.Euler(0.0f, _targetRotation, 0.0f) * inputDirection, 1); 
-                //Quaternion.Euler(0.0f, _targetRotation, 0.0f) * inputDirection;
+            Vector3 targetDirection = Vector3.ClampMagnitude(Quaternion.Euler(0.0f, _targetRotation, 0.0f) * inputDirection, 1);
 
-            // Move the player
-            _controller.Move(targetDirection * (_speed * Time.deltaTime) +
-                             new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+            // Karakteri hareket ettir
+            _controller.Move(targetDirection * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 
             // Animator güncellemesi
             if (_hasAnimator)
             {
-                // Current x and y values in the animator
-                float currentX = _animator.GetFloat("x");
-                float currentY = _animator.GetFloat("y");
+                if (isSwimming)
+                {
+                    _animator.SetBool("isSwimming", true); // Yüzme durumuna geç
+                    float currentSpeed = _animator.GetFloat("Speed");
+                    float sp = Mathf.Lerp(currentSpeed, _speed, Time.deltaTime * SpeedChangeRate);
+                    _animator.SetFloat("Speed", sp); // Hızına göre yüzme animasyonus
+                    
+                }
+                else
+                {
+                    _animator.SetBool("isSwimming", false); // Yüzme durumundan çık
+                                                            // Mevcut x ve y değerleri
+                    float currentX = _animator.GetFloat("x");
+                    float currentY = _animator.GetFloat("y");
 
-                // Target x and y values based on input and runMultiplier
-                float runMultiplier = _input.sprint ? 1.0f : 0.1f;
-                float targetX = Mathf.Min(_input.move.x,1) * runMultiplier;
-                float targetY = Mathf.Min(_input.move.y, 1) * runMultiplier;
+                    // Girdi ve runMultiplier'a bağlı hedef x ve y değerleri
+                    float runMultiplier = _input.sprint ? 1.0f : 0.1f;
+                    float targetX = Mathf.Min(_input.move.x, 1) * runMultiplier;
+                    float targetY = Mathf.Min(_input.move.y, 1) * runMultiplier;
 
-                // Smoothly transition to the target values
-                float x = Mathf.Lerp(currentX, targetX, Time.deltaTime * SpeedChangeRate);
-                float y = Mathf.Lerp(currentY, targetY, Time.deltaTime * SpeedChangeRate);
+                    // Hedef değerlere yumuşak geçiş
+                    float x = Mathf.Lerp(currentX, targetX, Time.deltaTime * SpeedChangeRate);
+                    float y = Mathf.Lerp(currentY, targetY, Time.deltaTime * SpeedChangeRate);
 
-                
-
-                _animator.SetFloat("x", x);
-                _animator.SetFloat("y", y);
-
-                
+                    _animator.SetFloat("x", x);
+                    _animator.SetFloat("y", y);
+                }
             }
         }
 
+
+
         public void JumpAndGravity()
         {
-            if (Grounded)
+            if (!isSwimming)
             {
-                // reset the fall timeout timer
-                _fallTimeoutDelta = FallTimeout;
-
-                // update animator if using character
-                if (_hasAnimator)
+                if (Grounded)
                 {
-                    _animator.SetBool(_animIDJump, false);
-                    _animator.SetBool(_animIDFreeFall, false);
-                }
-
-                // stop our velocity dropping infinitely when grounded
-                if (_verticalVelocity < 0.0f)
-                {
-                    _verticalVelocity = -2f;
-                }
-
-                // Jump
-                if (_input.jump && _jumpTimeoutDelta <= 0.0f)
-                {
-                    // the square root of H * -2 * G = how much velocity needed to reach desired height
-                    _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
+                    // reset the fall timeout timer
+                    _fallTimeoutDelta = FallTimeout;
 
                     // update animator if using character
                     if (_hasAnimator)
                     {
-                        _animator.SetBool(_animIDJump, true);
+                        _animator.SetBool(_animIDJump, false);
+                        _animator.SetBool(_animIDFreeFall, false);
+                    }
+
+                    // stop our velocity dropping infinitely when grounded
+                    if (_verticalVelocity < 0.0f)
+                    {
+                        _verticalVelocity = -2f;
+                    }
+
+                    // Jump
+                    if (_input.jump && _jumpTimeoutDelta <= 0.0f)
+                    {
+                        // the square root of H * -2 * G = how much velocity needed to reach desired height
+                        _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
+
+                        // update animator if using character
+                        if (_hasAnimator)
+                        {
+                            _animator.SetBool(_animIDJump, true);
+                        }
+                    }
+
+                    // jump timeout
+                    if (_jumpTimeoutDelta >= 0.0f)
+                    {
+                        _jumpTimeoutDelta -= Time.deltaTime;
                     }
                 }
-
-                // jump timeout
-                if (_jumpTimeoutDelta >= 0.0f)
+                else
                 {
-                    _jumpTimeoutDelta -= Time.deltaTime;
+                    // reset the jump timeout timer
+                    _jumpTimeoutDelta = JumpTimeout;
+
+                    // fall timeout
+                    if (_fallTimeoutDelta >= 0.0f)
+                    {
+                        _fallTimeoutDelta -= Time.deltaTime;
+                    }
+                    else
+                    {
+                        // update animator if using character
+                        if (_hasAnimator)
+                        {
+                            _animator.SetBool(_animIDFreeFall, true);
+                        }
+                    }
+
+                    // if we are not grounded, do not jump
+                    _input.jump = false;
+                }
+
+                // apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
+                if (_verticalVelocity < _terminalVelocity)
+                {
+                    _verticalVelocity += Gravity * Time.deltaTime;
                 }
             }
             else
             {
-                // reset the jump timeout timer
-                _jumpTimeoutDelta = JumpTimeout;
 
-                // fall timeout
-                if (_fallTimeoutDelta >= 0.0f)
-                {
-                    _fallTimeoutDelta -= Time.deltaTime;
-                }
-                else
-                {
-                    // update animator if using character
-                    if (_hasAnimator)
-                    {
-                        _animator.SetBool(_animIDFreeFall, true);
-                    }
-                }
-
-                // if we are not grounded, do not jump
-                _input.jump = false;
             }
-
-            // apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
-            if (_verticalVelocity < _terminalVelocity)
-            {
-                _verticalVelocity += Gravity * Time.deltaTime;
-            }
+            
         }
 
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
