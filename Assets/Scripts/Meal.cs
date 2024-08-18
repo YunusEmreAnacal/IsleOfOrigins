@@ -6,22 +6,18 @@ using UnityEngine;
 public class Meal : MonoBehaviour
 {
     public int foodIncrease = 25; // Etin karakterin sağlığını ne kadar artıracağı
-    //public Character character;
+    [SerializeField]private AudioClip eatVoice;
 
     
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            
-            Debug.Log("girdi." + other.gameObject.name);
-            
-                // Karakterin sağlığını artır
-                Debug.Log("girdiiiiiii." + other.gameObject.name);
-                Character.Instance.IncreaseFood(foodIncrease);
 
-                // Et objesini yok et
-                Destroy(gameObject);
+            Character.Instance.IncreaseFood(foodIncrease);
+            other.GetComponent<AudioSource>().PlayOneShot(eatVoice);
+            // Et objesini yok et
+            Destroy(gameObject);
             
         }
     }

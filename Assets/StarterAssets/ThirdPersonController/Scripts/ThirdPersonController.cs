@@ -1,6 +1,7 @@
 ﻿ using UnityEngine;
 #if ENABLE_INPUT_SYSTEM 
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 #endif
 
 /* Note: animations are called via the controller for both the character and capsule using animator null checks
@@ -143,6 +144,7 @@ namespace StarterAssets
         [SerializeField] private bool isCrouch = false;
         [SerializeField] private bool Canstand ;
 
+
         float x;
         float y;
 
@@ -150,12 +152,17 @@ namespace StarterAssets
         private float damage;
         public float meleeAttackDamage = 25f;
         public float axeAttackDamage = 50f;
+        public float waterIncrease = 10f;
         public LayerMask sheepLayer;
 
         private bool isItemEquipped = false;
 
         public bool isSwimming = false;
-        
+
+        private bool isDrinking;
+        public Button[] buttons;
+        public GameObject[] zones;
+
 
         public void SetItemEquipped(bool equipped)
         {
@@ -259,6 +266,50 @@ namespace StarterAssets
             }
         }
     
+        public void Drink()
+        {
+            if (Character.Instance.Water >= Character.Instance.MaxWater) return;
+     
+            anim.SetTrigger("Drink");
+            // isDrinking değişkenini true yaparak hareketi durdur
+            isDrinking = true;
+            DisableMovementAndButtons();
+
+        }
+        void DisableMovementAndButtons()
+        {
+            GetComponent<ThirdPersonController>().enabled = false;
+
+            foreach (Button button in buttons)
+            {
+                button.interactable = false;
+            }
+
+            foreach (GameObject obj in zones)
+            {
+                obj.SetActive(false);
+            }
+
+        }
+
+        void EnableMovementAndButtons()
+        {
+            GetComponent<ThirdPersonController>().enabled = true;
+
+            foreach (Button button in buttons)
+            {
+                button.interactable = true;
+            }
+            foreach (GameObject obj in zones)
+            {
+                obj.SetActive(true) ;
+            }
+        }
+        public void EndDrink()
+        {
+            isDrinking = false;
+            EnableMovementAndButtons();
+        }
 
 
     //ENDS**********************************************************************************
@@ -302,7 +353,10 @@ namespace StarterAssets
         private void Update()
         {
             _hasAnimator = TryGetComponent(out _animator);
-
+            if (isDrinking)
+            {
+                return; // Hareket kodları iptal edilir
+            }
             JumpAndGravity();
             GroundedCheck();
             Move();
@@ -430,6 +484,7 @@ namespace StarterAssets
                     float currentSpeed = _animator.GetFloat("Speed");
                     float sp = Mathf.Lerp(currentSpeed, _speed, Time.deltaTime * SpeedChangeRate);
                     _animator.SetFloat("Speed", sp); // Hızına göre yüzme animasyonus
+                    //audio.
                     
                 }
                 else
@@ -528,7 +583,7 @@ namespace StarterAssets
             }
             else
             {
-
+               
             }
             
         }
@@ -566,8 +621,11 @@ namespace StarterAssets
             }
         }
 
+
         private void OnLand(AnimationEvent animationEvent)
         {
+            if (isSwimming) return;
+
             if (animationEvent.animatorClipInfo.weight > 0.5f)
             {
                 AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
