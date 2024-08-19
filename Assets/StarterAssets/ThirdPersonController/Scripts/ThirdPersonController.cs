@@ -17,10 +17,10 @@ namespace StarterAssets
     {
         [Header("Player")]
         [Tooltip("Move speed of the character in m/s")]
-        public float MoveSpeed = 3.0f;
+        public float MoveSpeed;
 
         [Tooltip("Sprint speed of the character in m/s")]
-        public float SprintSpeed = 8f;
+        public float SprintSpeed;
 
         [Tooltip("How fast the character turns to face movement direction")]
         [Range(0.0f, 0.3f)]
@@ -35,7 +35,7 @@ namespace StarterAssets
 
         [Space(10)]
         [Tooltip("The height the player can jump")]
-        public float JumpHeight = 1.2f;
+        public float JumpHeight;
 
         [Tooltip("The character uses its own gravity value. The engine default is -9.81f")]
         public float Gravity;
@@ -193,7 +193,7 @@ namespace StarterAssets
         anim.SetBool("Crouch", true);
         controller.height = crouchHeight;
         controller.center = new Vector3(0f, controller.height/2, 0f);
-        SprintSpeed = 5f;
+        SprintSpeed = 4.0f;
         JumpHeight = 0f;
         crouchButton.SetActive(false);
         standButton.SetActive(true);
@@ -206,8 +206,8 @@ namespace StarterAssets
         anim.SetBool("Crouch", false);
         controller.height = standHeight;
         controller.center = new Vector3(0f, standHeight / 2, 0f);
-        SprintSpeed = 8f;
-        JumpHeight = 1.2f;
+        SprintSpeed = 6f;
+        JumpHeight = 0.8f;
         standButton.SetActive(false);
         crouchButton.SetActive(true);
         FootstepAudioVolume = 0.5f;
@@ -346,8 +346,8 @@ namespace StarterAssets
             
             standHeight = controller.height;
             controller.center = new Vector3(0f, standHeight / 2 , 0f);
-            SprintSpeed = 10f;
-            JumpHeight = 1.2f;
+            SprintSpeed = 6f;
+            JumpHeight = 0.8f;
         }
 
         private void Update()

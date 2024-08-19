@@ -40,7 +40,7 @@ public class EquipItem : MonoBehaviour
         {
             controller = GetComponent<ThirdPersonController>();
         }
-    }
+    } 
     private void BoxCastHandler()
     {
         Vector3 origin = transform.position + boxOffset; // BoxCast'in başlangıç pozisyonu
