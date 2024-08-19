@@ -32,6 +32,8 @@ public class Character : MonoBehaviour
 
     private float lastYPosition;
     private bool isFalling = false;
+
+    private bool isFallDamage = false;
     public float minFallHeightForDamage = 3f;
     public float fallDamageMultiplier = 0.1f; // Y�ksekli�e ba�l� hasar �arpan�
 
@@ -98,6 +100,7 @@ public class Character : MonoBehaviour
         {
             if (isFalling)
             {
+                
                 CalculateFallDamage();
                 isFalling = false;
             }
@@ -122,13 +125,13 @@ public class Character : MonoBehaviour
         if (fallHeight > minFallHeightForDamage) // D���� y�ksekli�i pozitifse hasar uygula
         {
             float fallDamage = (fallHeight - minFallHeightForDamage) * fallDamageMultiplier; // D����e ba�l� hasar� hesapla
-                
+            isFallDamage = true;    
             TakeDamage(fallDamage, lastPosition); // Hesaplanan hasar� uygula
                 
                 
         }
         
-        
+        isFallDamage=false;
     }
 
     public void TakeDamage(float damage, Vector3 attackerPosition) // karakterin canını düşüren fonksiyon
@@ -138,6 +141,9 @@ public class Character : MonoBehaviour
         Audio.Play();
         Health -= damage;
         lastPosition = attackerPosition;
+        if (!isFallDamage) animator.SetTrigger("ZombieHit");
+
+
 
         OnHealthChanged?.Invoke(Health);
 
@@ -270,6 +276,11 @@ public class Character : MonoBehaviour
         Audio.clip = swimmingVoice;
         Audio.PlayOneShot(swimmingVoice);
 
+    }
+
+    public void OnHitAnim()
+    {
+        animator.SetTrigger("Hit");
     }
 
     public void OnDeathAnimationEnd()
