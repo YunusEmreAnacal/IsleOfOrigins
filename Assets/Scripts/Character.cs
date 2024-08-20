@@ -88,7 +88,7 @@ public class Character : MonoBehaviour
 
     void Update()
     {
-
+        
         ReduceHunger();
         ReduceThirsty();
         IncreaseHealth();
@@ -125,7 +125,7 @@ public class Character : MonoBehaviour
         if (fallHeight > minFallHeightForDamage) // D���� y�ksekli�i pozitifse hasar uygula
         {
             float fallDamage = (fallHeight - minFallHeightForDamage) * fallDamageMultiplier; // D����e ba�l� hasar� hesapla
-            isFallDamage = true;    
+            isFallDamage = true;//parametre
             TakeDamage(fallDamage, lastPosition); // Hesaplanan hasar� uygula
                 
                 
@@ -174,51 +174,43 @@ public class Character : MonoBehaviour
 
 
 
-    private void ReduceHunger()
+    private void ReduceHungerAndThirsty(ref float timer, float timerInterval, ref float value, Action<float> onValueChanged,int damage) // tekilleştirme
     {
 
         if (isDead) return;
 
-        hungerTimer += Time.deltaTime;
-        if (hungerTimer >= hungerTime)
+        timer += Time.deltaTime;
+        if (timer >= timerInterval)
         {
-            if (Food > 0)
+            if (value > 0)
             {
                 Debug.Log("xxx");
-                Food = Mathf.Max(0, Food - 10);
-                OnFoodChanged?.Invoke(Food);
+                value = Mathf.Max(0, value - 10);
+                onValueChanged?.Invoke(value);
 
             }
             else
             {
-                TakeDamage(10,lastPosition);
+                TakeDamage(damage,lastPosition);
 
             }
-            hungerTimer = 0f;
+            timer = 0f;
         }
     }
 
     private void ReduceThirsty()
     {
-        if (isDead) return;
-
-        thirstTimer += Time.deltaTime;
-        if (thirstTimer >= thirstTime)
-        {
-            if (Water > 0)
-            {
-                Debug.Log("xxx");
-                Water = Mathf.Max(0, Water - 10);
-                OnWaterChanged?.Invoke(Water);
-
-            }
-            else
-            {
-                TakeDamage(10, lastPosition);
-
-            }
-            thirstTimer = 0f;
-        }
+        float currentWater = Water;
+        ReduceHungerAndThirsty(ref thirstTimer,thirstTime,ref currentWater,OnWaterChanged, 10);
+        Water = currentWater;
+        
+    }
+    private void ReduceHunger()
+    {
+        float currentFood = Food;
+        ReduceHungerAndThirsty(ref hungerTimer,hungerTime,ref currentFood,OnFoodChanged, 20);
+        Food = currentFood;
+        
     }
 
     public void IncreaseFood(float foodIncrease)
@@ -237,7 +229,7 @@ public class Character : MonoBehaviour
     public void OnIncreaseThirst()
     {
         if (isDead) return;
-        Water = Mathf.Min(MaxWater, 100f + Water);
+        Water = Mathf.Min(MaxWater, 100f + Water); // parametre
         OnWaterChanged?.Invoke(Water);
         Audio.clip = drinkVoice;
         Audio.Play();
@@ -276,11 +268,6 @@ public class Character : MonoBehaviour
         Audio.clip = swimmingVoice;
         Audio.PlayOneShot(swimmingVoice);
 
-    }
-
-    public void OnHitAnim()
-    {
-        animator.SetTrigger("Hit");
     }
 
     public void OnDeathAnimationEnd()

@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using StarterAssets;
-
 public class SwimArea : MonoBehaviour
 {
     [SerializeField] private AudioClip swimmingVoice;

@@ -30,7 +30,7 @@ public class Bar_Manager : MonoBehaviour
             Character.Instance.OnWaterChanged += UpdateWaterUI;
         }
 
-        healthSlider.maxValue = Character.Instance.MaxHealth;
+        healthSlider.maxValue = Character.Instance.MaxHealth;//fonks
         easeHealthSlider.maxValue = Character.Instance.MaxHealth;
 
         foodSlider.maxValue = Character.Instance.MaxFood;
@@ -49,7 +49,7 @@ public class Bar_Manager : MonoBehaviour
         Debug.Log("heslid:" + healthSlider.maxValue);
         Debug.Log("easslid:" + easeHealthSlider.maxValue);
 
-        healthSlider.interactable = false;
+        healthSlider.interactable = false;//fonks
         easeHealthSlider.interactable = false;
         foodSlider.interactable = false;
         easefoodSlider.interactable = false;
@@ -87,7 +87,7 @@ public class Bar_Manager : MonoBehaviour
     private void Update()
     {
         // Ease bar, healthSlider'�n yeni de�erine yava��a yakla��r
-        if (easeHealthSlider.value != healthSlider.value)
+        if (easeHealthSlider.value != healthSlider.value) // fonks
         {
             easeHealthSlider.value = Mathf.Lerp(easeHealthSlider.value, healthSlider.value, lerpSpeed );
 

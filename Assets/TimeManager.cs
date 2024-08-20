@@ -64,7 +64,7 @@ public class TimeManager : MonoBehaviour
     {
         if (value == 2)
         {
-            StartCoroutine(LerpSkybox(skyboxNight, skyboxSunrise, 10f));
+            StartCoroutine(LerpSkybox(skyboxNight, skyboxSunrise, 10f)); // timer
             StartCoroutine(LerpLight(graddientNightToSunrise, 10f));
         }
         else if (value == 4)
@@ -94,7 +94,7 @@ public class TimeManager : MonoBehaviour
             RenderSettings.skybox.SetFloat("_Blend", i / time);
             yield return null;
         }
-        RenderSettings.skybox.SetTexture("_Texture1", b);
+        //RenderSettings.skybox.SetTexture("_Texture1", b);
     }
 
     private IEnumerator LerpLight(Gradient lightGradient, float time)

@@ -6,7 +6,7 @@ public class Spawner : MonoBehaviour
     public GameObject sheepPrefab;
     public GameObject zombiePrefab;
     public Transform[] spawnPoints;
-    public Camera playerCamera; // Kamerayı burada belirleyin
+    public Camera playerCamera;
 
     private List<Transform> availableSpawnPoints = new List<Transform>();
     private List<GameObject> spawnedSheep = new List<GameObject>();
@@ -45,7 +45,7 @@ public class Spawner : MonoBehaviour
 
     bool IsPointVisibleFromCamera(Vector3 point)
     {
-        Plane[] planes = GeometryUtility.CalculateFrustumPlanes(playerCamera);
+        Plane[] planes = GeometryUtility.CalculateFrustumPlanes(playerCamera);//DIŞARDA
         return GeometryUtility.TestPlanesAABB(planes, new Bounds(point, Vector3.zero));
     }
 
